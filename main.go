@@ -28,7 +28,7 @@ var Version = "development"
 
 var (
 	listenAddress string
-	metricsPath string
+	metricsPath   string
 	socket        string
 )
 
