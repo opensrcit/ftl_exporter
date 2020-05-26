@@ -175,12 +175,14 @@ var (
 	)
 )
 
-type FTLExporter struct {
+// Exporter represents exporter and has a link to the client
+type Exporter struct {
 	client *ftl_client.Client
 }
 
-func NewFTLExporter(socket string) *FTLExporter {
-	log.Printf("Setup FTL exporter using socket path: %s", socket)
+// NewExporter creates exporter using the provided socket path
+func NewExporter(socket string) *Exporter {
+	log.Printf("Initialize exporter using socket path: %s", socket)
 
 	c, err := net.Dial("unix", socket)
 	if err != nil {
@@ -195,12 +197,14 @@ func NewFTLExporter(socket string) *FTLExporter {
 
 	client := ftl_client.NewClient(socket)
 
-	return &FTLExporter{
+	return &Exporter{
 		client: client,
 	}
 }
 
-func (collector *FTLExporter) Describe(ch chan<- *prometheus.Desc) {
+// Describe describes all the metrics ever exported by the exporter.
+// It implements prometheus.Collector.
+func (collector *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- domainsBeingBlocked
 	ch <- dnsQueriesToday
 	ch <- adsBlockedToday
@@ -234,7 +238,9 @@ func (collector *FTLExporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- clientsOverTimeMetric
 }
 
-func (collector *FTLExporter) Collect(ch chan<- prometheus.Metric) {
+// Collect is called by the Prometheus registry when collecting
+// metrics.
+func (collector *Exporter) Collect(ch chan<- prometheus.Metric) {
 	stats, err := collector.client.GetStats()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)
