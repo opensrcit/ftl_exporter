@@ -22,12 +22,14 @@ import (
 	"os"
 )
 
+// Client for Pi-holes's FTL. Contains address to a unix socket
 type Client struct {
 	addr *net.UnixAddr
 }
 
 const formatEOF uint8 = 0xc1 // 193
 
+// Stats represents the response of `>stats` command
 type Stats struct {
 	DomainsBeingBlocked UInt32Block
 	DnsQueries          UInt32Block
@@ -41,6 +43,7 @@ type Stats struct {
 	Status              UInt8Block
 }
 
+// DBStats represents the response of `>db-stats` command
 type DBStats struct {
 	Rows UInt32Block
 	Size UInt64Block
