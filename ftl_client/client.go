@@ -15,11 +15,9 @@ package ftl_client
 
 import (
 	"encoding/binary"
-	"fmt"
 	"io"
 	"log"
 	"net"
-	"os"
 )
 
 // Client for Pi-holes's FTL daemon. Contains address to a unix socket
@@ -27,16 +25,26 @@ type Client struct {
 	addr *net.UnixAddr
 }
 
-func NewClient(socket string) *Client {
+func NewClient(socket string) (*Client, error) {
 	addr, err := net.ResolveUnixAddr("unix", socket)
 	if err != nil {
-		fmt.Printf("Failed to resolve: %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
+
+	c, err := net.Dial("unix", socket)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		err := c.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	return &Client{
 		addr: addr,
-	}
+	}, nil
 }
 
 func (client *Client) GetStats() (*Stats, error) {

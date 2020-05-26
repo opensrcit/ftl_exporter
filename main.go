@@ -55,7 +55,12 @@ func init() {
 func main() {
 	log.Println("FTL Exporter", version.Version)
 
-	ftlExporter := collector.NewExporter(socket)
+	ftlExporter, err := collector.NewExporter(socket)
+	if err != nil {
+		log.Fatalln(err)
+
+		return
+	}
 	prometheus.MustRegister(ftlExporter)
 
 	http.Handle(metricsPath, promhttp.Handler())
