@@ -13,5 +13,5 @@
 
 package version
 
-// Current version of the module
+// Version represents current version of the module
 var Version = "development"

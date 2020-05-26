@@ -8,7 +8,7 @@ WORKDIR /go/src/github.com/opensrcit/ftl-exporter
 RUN apk --no-cache add git
 COPY . .
 RUN go mod vendor
-RUN CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -trimpath -ldflags "-s -w -X version/version.Version=${VERSION}" -o ftl-exporter .
+RUN CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -trimpath -ldflags "-s -w -X github.com/opensrcit/ftl_exporter/version.Version=${VERSION}" -o ftl-exporter .
 
 
 FROM scratch
