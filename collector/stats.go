@@ -32,11 +32,11 @@ type statsCollector struct {
 }
 
 func init() {
-	registerCollector("stats", defaultEnabled, NewStatsCollector)
+	registerCollector("stats", defaultEnabled, newStatsCollector)
 }
 
-// NewStatsCollector returns a new Collector exposing kernel/system statistics.
-func NewStatsCollector() (Collector, error) {
+// newStatsCollector returns a new Collector exposing >stats
+func newStatsCollector() (Collector, error) {
 	return &statsCollector{
 		domainsBeingBlocked: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "domains_being_blocked"),
@@ -92,8 +92,8 @@ func NewStatsCollector() (Collector, error) {
 	}, nil
 }
 
-// Update implements Collector and exposes metrics from >stats command
-func (c *statsCollector) Update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+// update implements Collector and exposes metrics from >stats command
+func (c *statsCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	stats, err := client.GetStats()
 	if err != nil {
 		return err

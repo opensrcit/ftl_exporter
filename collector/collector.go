@@ -47,19 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >top-domains
-	overallQueriesToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "overall_queries_today"),
-		"Overall queries today.",
-		nil, nil,
-	)
-
-	topQueriesToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "top_queries_today"),
-		"Top queries today.",
-		[]string{"domain"}, nil,
-	)
-
 	// >top-ads
 	topAdsToday = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "top_ads_today"),
@@ -194,9 +181,6 @@ func NewExporter(socket string) (*Exporter, error) {
 // Describe describes all the metrics ever exported by the exporter.
 // It implements prometheus.Collector.
 func (collector *Exporter) Describe2(ch chan<- *prometheus.Desc) {
-	ch <- overallQueriesToday
-	ch <- topQueriesToday
-
 	ch <- topAdsToday
 	ch <- overallAdsToday
 
@@ -219,17 +203,6 @@ func (collector *Exporter) Describe2(ch chan<- *prometheus.Desc) {
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	queries, err := collector.client.GetTopDomains()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	ch <- prometheus.MustNewConstMetric(overallQueriesToday, prometheus.GaugeValue, float64(queries.Total.Value))
-
-	for _, hits := range queries.List {
-		ch <- prometheus.MustNewConstMetric(topQueriesToday, prometheus.GaugeValue, float64(hits.Count.Value), hits.Domain)
-	}
-
 	ads, err := collector.client.GetTopAds()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)
@@ -357,7 +330,7 @@ func (collector Exporter) Collect(ch chan<- prometheus.Metric) {
 
 func execute(name string, c Collector, client *ftl_client.Client, ch chan<- prometheus.Metric) {
 	begin := time.Now()
-	err := c.Update(client, ch)
+	err := c.update(client, ch)
 	duration := time.Since(begin)
 
 	success := float64(1)
@@ -371,5 +344,5 @@ func execute(name string, c Collector, client *ftl_client.Client, ch chan<- prom
 // Collector is the interface a collector has to implement.
 type Collector interface {
 	// Get new metrics and expose them via prometheus registry.
-	Update(client *ftl_client.Client, ch chan<- prometheus.Metric) error
+	update(client *ftl_client.Client, ch chan<- prometheus.Metric) error
 }
