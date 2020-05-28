@@ -29,7 +29,6 @@ func init() {
 	registerCollector("db_stats", defaultDisabled, newDbStatsCollector)
 }
 
-// newDomainCollector returns a new Collector exposing >dbstats command
 func newDbStatsCollector() (Collector, error) {
 	return &dbStatsCollector{
 		queriesInDatabase: prometheus.NewDesc(
@@ -46,7 +45,6 @@ func newDbStatsCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >dbstats command
 func (c *dbStatsCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	dbStats, err := client.GetDBStats()
 	if err != nil {

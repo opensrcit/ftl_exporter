@@ -26,7 +26,6 @@ func init() {
 	registerCollector("forward_destinations", defaultEnabled, newForwardDestinationCollector)
 }
 
-// newDomainCollector returns a new Collector exposing >forward-dest command
 func newForwardDestinationCollector() (Collector, error) {
 	return &forwardDestinationCollector{
 		forwardDestinationsToday: prometheus.NewDesc(
@@ -37,7 +36,6 @@ func newForwardDestinationCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >forward-dest command
 func (c *forwardDestinationCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	destinations, err := client.GetForwardDestinations()
 	if err != nil {

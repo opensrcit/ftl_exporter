@@ -27,7 +27,6 @@ func init() {
 	registerCollector("clients", defaultEnabled, newClientCollector)
 }
 
-// newDomainCollector returns a new Collector exposing >top-clients command
 func newClientCollector() (Collector, error) {
 	return &clientCollector{
 		topClientsToday: prometheus.NewDesc(
@@ -44,7 +43,6 @@ func newClientCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >top-clients command
 func (c *clientCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	clients, err := client.GetTopClients()
 	if err != nil {

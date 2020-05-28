@@ -27,7 +27,6 @@ func init() {
 	registerCollector("domains", defaultEnabled, newDomainCollector)
 }
 
-// newDomainCollector returns a new Collector exposing >top-domains command
 func newDomainCollector() (Collector, error) {
 	return &domainCollector{
 		totalDomainsToday: prometheus.NewDesc(
@@ -44,7 +43,6 @@ func newDomainCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >top-domains command
 func (c *domainCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	queries, err := client.GetTopDomains()
 	if err != nil {

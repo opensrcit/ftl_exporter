@@ -47,19 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >overTime
-	forwardedOverTime = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "forwarded_over_time"),
-		"Forwarded queries over time (last 10 minutes).",
-		nil, nil,
-	)
-
-	blockedOverTime = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "blocked_over_time"),
-		"Blocked queries over time (last 10 minutes).",
-		nil, nil,
-	)
-
 	// >ClientsoverTime TODO: is it public api?
 	clientsOverTimeMetric = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "clients_over_time"),
@@ -128,27 +115,6 @@ func NewExporter(socket string) (*Exporter, error) {
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	queriesOverTime, err := collector.client.GetQueriesOverTime()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	sort.SliceStable(queriesOverTime.Forwarded, func(i, j int) bool {
-		return queriesOverTime.Forwarded[i].Timestamp.Value > queriesOverTime.Forwarded[j].Timestamp.Value
-	})
-	lastForwardedOverTime := queriesOverTime.Forwarded[:1]
-	for _, hits := range lastForwardedOverTime {
-		ch <- prometheus.MustNewConstMetric(forwardedOverTime, prometheus.GaugeValue, float64(hits.Count.Value))
-	}
-
-	sort.SliceStable(queriesOverTime.Blocked, func(i, j int) bool {
-		return queriesOverTime.Blocked[i].Timestamp.Value > queriesOverTime.Blocked[j].Timestamp.Value
-	})
-	lastBlockedOverTime := queriesOverTime.Blocked[:1]
-	for _, hits := range lastBlockedOverTime {
-		ch <- prometheus.MustNewConstMetric(blockedOverTime, prometheus.GaugeValue, float64(hits.Count.Value))
-	}
-
 	clientsOverTime, err := collector.client.GetClientsOverTime()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)

@@ -35,7 +35,6 @@ func init() {
 	registerCollector("stats", defaultEnabled, newStatsCollector)
 }
 
-// newStatsCollector returns a new Collector exposing >stats
 func newStatsCollector() (Collector, error) {
 	return &statsCollector{
 		domainsBeingBlocked: prometheus.NewDesc(
@@ -100,7 +99,6 @@ func newStatsCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >stats command
 func (c *statsCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	stats, err := client.GetStats()
 	if err != nil {

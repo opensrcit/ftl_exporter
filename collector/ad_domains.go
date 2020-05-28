@@ -27,7 +27,6 @@ func init() {
 	registerCollector("ad_domains", defaultEnabled, newAdDomainCollector)
 }
 
-// newDomainCollector returns a new Collector exposing >top-ads command
 func newAdDomainCollector() (Collector, error) {
 	return &adDomainCollector{
 		totalAdDomainsToday: prometheus.NewDesc(
@@ -44,7 +43,6 @@ func newAdDomainCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >top-ads command
 func (c *adDomainCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	queries, err := client.GetTopAds()
 	if err != nil {

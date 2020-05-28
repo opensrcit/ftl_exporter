@@ -26,7 +26,6 @@ func init() {
 	registerCollector("query_types", defaultEnabled, newQueryTypesCollector)
 }
 
-// newDomainCollector returns a new Collector exposing >querytypes command
 func newQueryTypesCollector() (Collector, error) {
 	return &queryTypesCollector{
 		queryTypesToday: prometheus.NewDesc(
@@ -37,7 +36,6 @@ func newQueryTypesCollector() (Collector, error) {
 	}, nil
 }
 
-// update implements Collector and exposes metrics from >querytypes command
 func (c *queryTypesCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	queryTypesData, err := client.GetQueryTypes()
 	if err != nil {
