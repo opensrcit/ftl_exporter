@@ -47,19 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >dbstats
-	queriesInDatabase = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "queries_in_database"),
-		"Queries in database.",
-		nil, nil,
-	)
-
-	databaseFilesize = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "database_filesize"),
-		"Database file size.",
-		nil, nil,
-	)
-
 	// >overTime
 	forwardedOverTime = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "forwarded_over_time"),
@@ -141,14 +128,6 @@ func NewExporter(socket string) (*Exporter, error) {
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	dbStats, err := collector.client.GetDBStats()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	ch <- prometheus.MustNewConstMetric(queriesInDatabase, prometheus.CounterValue, float64(dbStats.Rows.Value))
-	ch <- prometheus.MustNewConstMetric(databaseFilesize, prometheus.CounterValue, float64(dbStats.Size.Value))
-
 	queriesOverTime, err := collector.client.GetQueriesOverTime()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)
