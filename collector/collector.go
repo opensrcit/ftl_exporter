@@ -47,19 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >top-clients
-	topSourcesToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "top_sources_today"),
-		"Top sources today.",
-		[]string{"client"}, nil,
-	)
-
-	topBlockedSourcesToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "top_blocked_sources_today"),
-		"Top blocked sources today.",
-		[]string{"client"}, nil,
-	)
-
 	// >forward-dest
 	forwardDestinationsToday = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "forward_destinations_today"),
@@ -168,24 +155,6 @@ func NewExporter(socket string) (*Exporter, error) {
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	clients, err := collector.client.GetTopClients()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	for _, hits := range clients.List {
-		ch <- prometheus.MustNewConstMetric(topSourcesToday, prometheus.GaugeValue, float64(hits.Count.Value), hits.Domain)
-	}
-
-	blockedClients, err := collector.client.GetTopBlockedClients()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	for _, hits := range blockedClients.List {
-		ch <- prometheus.MustNewConstMetric(topBlockedSourcesToday, prometheus.GaugeValue, float64(hits.Count.Value), hits.Domain)
-	}
-
 	destinations, err := collector.client.GetForwardDestinations()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)

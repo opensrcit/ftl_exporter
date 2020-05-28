@@ -35,6 +35,7 @@ func newAdDomainCollector() (Collector, error) {
 			"Overall ads.",
 			nil, nil,
 		),
+
 		topAdDomainsToday: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "top_ad_domains_today"),
 			"Top Ads today.",

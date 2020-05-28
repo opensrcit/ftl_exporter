@@ -49,41 +49,49 @@ func newStatsCollector() (Collector, error) {
 			"DNS Queries today.",
 			nil, nil,
 		),
+
 		adsBlockedToday: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "ads_blocked_today"),
 			"Ads blocked today.",
 			nil, nil,
 		),
+
 		adsPercentageToday: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "ads_percentage_today"),
 			"Ads percentage today.",
 			nil, nil,
 		),
+
 		uniqueDomainsToday: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "unique_domains_today"),
 			"Unique domains seen today.",
 			nil, nil,
 		),
+
 		queriesForwardedToday: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "queries_forwarded_today"),
 			"Queries forwarded today.",
 			nil, nil,
 		),
+
 		queriesCachedToday: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "queries_cached_today"),
 			"Queries cached today.",
 			nil, nil,
 		),
+
 		clientsEverSeen: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "clients_ever_seen"),
 			"Clients ever seen.",
 			nil, nil,
 		),
+
 		uniqueClients: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "unique_clients"),
 			"Unique clients.",
 			nil, nil,
 		),
+
 		status: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "status"),
 			"Blocking status.",
