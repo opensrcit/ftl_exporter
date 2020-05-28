@@ -19,7 +19,6 @@ import (
 	"github.com/opensrcit/ftl_exporter/ftl_client"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
-	"sort"
 	"sync"
 	"time"
 )
@@ -45,13 +44,6 @@ var (
 		prometheus.BuildFQName(namespace, "scrape", "collector_success"),
 		"ftl_exporter: Whether a collector succeeded.",
 		[]string{"collector"}, nil,
-	)
-
-	// >ClientsoverTime TODO: is it public api?
-	clientsOverTimeMetric = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "clients_over_time"),
-		"Client requests over time (last 10 minutes).",
-		[]string{"address"}, nil,
 	)
 )
 
@@ -110,39 +102,6 @@ func NewExporter(socket string) (*Exporter, error) {
 		collectors: collectors,
 		client:     client,
 	}, nil
-}
-
-// Collect is called by the Prometheus registry when collecting
-// metrics.
-func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	clientsOverTime, err := collector.client.GetClientsOverTime()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	clientNames, err := collector.client.GetClientNames()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	sort.SliceStable(clientsOverTime.List, func(i, j int) bool {
-		return clientsOverTime.List[i].Timestamp.Value > clientsOverTime.List[j].Timestamp.Value
-	})
-	lastClientsOverTime := clientsOverTime.List[:1]
-	for _, hits := range lastClientsOverTime {
-		for i, count := range hits.Count {
-			address := fmt.Sprintf("address_%d", i)
-			if i < len(clientNames.List) {
-				address = clientNames.List[i].Address
-			}
-			ch <- prometheus.MustNewConstMetric(
-				clientsOverTimeMetric,
-				prometheus.GaugeValue,
-				float64(count.Value),
-				address,
-			)
-		}
-	}
 }
 
 // Describe implements the prometheus.Collector interface.
