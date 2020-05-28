@@ -47,13 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >querytypes
-	queryTypes = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "query_types_today"),
-		"DNS Query types today.",
-		[]string{"query"}, nil,
-	)
-
 	// >dbstats
 	queriesInDatabase = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "queries_in_database"),
@@ -148,15 +141,6 @@ func NewExporter(socket string) (*Exporter, error) {
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	queryTypesData, err := collector.client.GetQueryTypes()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	for _, hits := range *queryTypesData {
-		ch <- prometheus.MustNewConstMetric(queryTypes, prometheus.GaugeValue, float64(hits.Percentage.Value), hits.Entry)
-	}
-
 	dbStats, err := collector.client.GetDBStats()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)
