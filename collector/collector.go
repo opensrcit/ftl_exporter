@@ -47,19 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >top-ads
-	topAdsToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "top_ads_today"),
-		"Top Ads today.",
-		[]string{"domain"}, nil,
-	)
-
-	overallAdsToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "overall_ads_today"),
-		"Overall ads.",
-		nil, nil,
-	)
-
 	// >top-clients
 	topSourcesToday = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "top_sources_today"),
@@ -178,42 +165,9 @@ func NewExporter(socket string) (*Exporter, error) {
 	}, nil
 }
 
-// Describe describes all the metrics ever exported by the exporter.
-// It implements prometheus.Collector.
-func (collector *Exporter) Describe2(ch chan<- *prometheus.Desc) {
-	ch <- topAdsToday
-	ch <- overallAdsToday
-
-	ch <- topSourcesToday
-	ch <- topBlockedSourcesToday
-
-	ch <- forwardDestinationsToday
-
-	ch <- queryTypes
-
-	ch <- queriesInDatabase
-	ch <- databaseFilesize
-
-	ch <- forwardedOverTime
-	ch <- blockedOverTime
-
-	ch <- clientsOverTimeMetric
-}
-
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	ads, err := collector.client.GetTopAds()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	ch <- prometheus.MustNewConstMetric(overallAdsToday, prometheus.GaugeValue, float64(ads.Total.Value))
-
-	for _, hits := range ads.List {
-		ch <- prometheus.MustNewConstMetric(topAdsToday, prometheus.GaugeValue, float64(hits.Count.Value), hits.Domain)
-	}
-
 	clients, err := collector.client.GetTopClients()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)
