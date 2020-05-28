@@ -47,13 +47,6 @@ var (
 		[]string{"collector"}, nil,
 	)
 
-	// >forward-dest
-	forwardDestinationsToday = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "forward_destinations_today"),
-		"Forward destinations today.",
-		[]string{"address"}, nil,
-	)
-
 	// >querytypes
 	queryTypes = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "query_types_today"),
@@ -155,15 +148,6 @@ func NewExporter(socket string) (*Exporter, error) {
 // Collect is called by the Prometheus registry when collecting
 // metrics.
 func (collector *Exporter) Collect2(ch chan<- prometheus.Metric) {
-	destinations, err := collector.client.GetForwardDestinations()
-	if err != nil {
-		log.Fatalf("failed to get data: %v", err)
-	}
-
-	for _, hits := range *destinations {
-		ch <- prometheus.MustNewConstMetric(forwardDestinationsToday, prometheus.GaugeValue, float64(hits.Percentage.Value), hits.Address)
-	}
-
 	queryTypesData, err := collector.client.GetQueryTypes()
 	if err != nil {
 		log.Fatalf("failed to get data: %v", err)
