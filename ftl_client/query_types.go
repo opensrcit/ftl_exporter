@@ -19,9 +19,9 @@ import (
 	"net"
 )
 
-// GetQueryTypes retrieves query type and their percentages among all queries
-// from response of `>querytypes` command
-func (client *FTLClient) GetQueryTypes() (*[]PercentageEntry, error) {
+// GetQueryTypes retrieves map with query type as keys and their percentages
+// among all queries as values from response of `>querytypes` command
+func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (client *FTLClient) GetQueryTypes() (*[]PercentageEntry, error) {
 		return nil, err
 	}
 
-	var queryTypes []PercentageEntry
+	queryTypes := make(map[string]float32)
 	for {
 		var format uint8
 		err := binary.Read(conn, binary.BigEndian, &format)
@@ -66,10 +66,7 @@ func (client *FTLClient) GetQueryTypes() (*[]PercentageEntry, error) {
 			return nil, err
 		}
 
-		queryTypes = append(queryTypes, PercentageEntry{
-			Entry:      string(name),
-			Percentage: percentage,
-		})
+		queryTypes[string(name)] = percentage.Value
 	}
 
 	return &queryTypes, nil

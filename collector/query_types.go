@@ -37,13 +37,13 @@ func newQueryTypesCollector() (Collector, error) {
 }
 
 func (c *queryTypesCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
-	queryTypesData, err := client.GetQueryTypes()
+	queryTypes, err := client.GetQueryTypes()
 	if err != nil {
 		return err
 	}
 
-	for _, hits := range *queryTypesData {
-		ch <- prometheus.MustNewConstMetric(c.queryTypesToday, prometheus.GaugeValue, float64(hits.Percentage.Value), hits.Entry)
+	for queryType, percent := range *queryTypes {
+		ch <- prometheus.MustNewConstMetric(c.queryTypesToday, prometheus.GaugeValue, float64(percent), queryType)
 	}
 
 	return nil
