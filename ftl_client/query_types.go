@@ -14,7 +14,6 @@
 package ftl_client
 
 import (
-	"encoding/binary"
 	"net"
 )
 
@@ -41,14 +40,12 @@ func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 			return nil, err
 		}
 
-		var percentage Float32Block
-
-		err = binary.Read(conn, binary.BigEndian, &percentage)
+		percentage, err := readFloat(conn)
 		if err != nil {
 			return nil, err
 		}
 
-		queryTypes[string(name)] = percentage.Value
+		queryTypes[name] = percentage
 	}
 
 	return &queryTypes, nil

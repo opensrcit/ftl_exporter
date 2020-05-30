@@ -62,36 +62,62 @@ func NewClient(socket string) (*FTLClient, error) {
 	}, nil
 }
 
-func readString(conn *net.UnixConn) ([]byte, error) {
+func readString(conn *net.UnixConn) (string, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return nil, EOF
+			return "", EOF
 		}
 
-		return nil, err
+		return "", err
 	}
 
 	if format == formatEOF {
-		return nil, EOF
+		return "", EOF
 	}
 
 	if format != formatString {
-		return nil, invalidFormat
+		return "", invalidFormat
 	}
 
 	var length uint32
 	if err := binary.Read(conn, binary.BigEndian, &length); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	address := make([]byte, length)
+	value := make([]byte, length)
 
-	if err := binary.Read(conn, binary.BigEndian, &address); err != nil {
-		return nil, err
+	if err := binary.Read(conn, binary.BigEndian, &value); err != nil {
+		return "", err
 	}
 
-	return address, nil
+	return string(value), nil
+}
+
+func readFloat(conn *net.UnixConn) (float32, error) {
+	var format uint8
+	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
+		if err == io.EOF {
+			return 0.0, EOF
+		}
+
+		return 0.0, err
+	}
+
+	if format == formatEOF {
+		return 0.0, EOF
+	}
+
+	if format != formatFloat32 {
+		return 0.0, invalidFormat
+	}
+
+	var value float32
+	if err := binary.Read(conn, binary.BigEndian, &value); err != nil {
+		return 0.0, err
+	}
+
+	return value, nil
 }
 
 func closeConnection(c io.Closer) {

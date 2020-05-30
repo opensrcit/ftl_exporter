@@ -48,7 +48,7 @@ func (client *FTLClient) GetClientNames() (*[]Client, error) {
 		clients = append(clients, struct {
 			Name    string
 			Address string
-		}{Name: string(name), Address: string(address)})
+		}{Name: name, Address: address})
 	}
 
 	return &clients, nil

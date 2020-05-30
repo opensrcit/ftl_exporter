@@ -54,8 +54,8 @@ func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error
 		}
 
 		destinations = append(destinations, UpstreamDestination{
-			Name:       string(name),
-			Address:    string(address),
+			Name:       name,
+			Address:    address,
 			Percentage: percentage,
 		})
 	}

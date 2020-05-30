@@ -71,7 +71,7 @@ func topClientsFor(command string, client *FTLClient) (*Entries, error) {
 		result.List = append(result.List, struct {
 			Entry string
 			Count UInt32Block
-		}{Entry: string(address), Count: count})
+		}{Entry: address, Count: count})
 	}
 
 	return &result, nil

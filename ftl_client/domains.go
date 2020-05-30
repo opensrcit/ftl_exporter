@@ -65,7 +65,7 @@ func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 		result.List = append(result.List, struct {
 			Entry string
 			Count UInt32Block
-		}{Entry: string(domainName), Count: domainCount})
+		}{Entry: domainName, Count: domainCount})
 	}
 
 	return &result, nil
