@@ -19,32 +19,32 @@ import (
 	"sort"
 )
 
-type requestsOverTimeCollector struct {
-	requestsForwarded *prometheus.Desc
-	requestsBlocked   *prometheus.Desc
+type queriesOverTimeCollector struct {
+	queriesForwarded *prometheus.Desc
+	queriesBlocked   *prometheus.Desc
 }
 
 func init() {
-	registerCollector("requests_over_time", defaultEnabled, newRequestsOverTimeCollector)
+	registerCollector("queries_over_time", defaultEnabled, newQueriesOverTimeCollector)
 }
 
-func newRequestsOverTimeCollector() (Collector, error) {
-	return &requestsOverTimeCollector{
-		requestsForwarded: prometheus.NewDesc(
-			prometheus.BuildFQName(namespace, "", "requests_allowed"),
-			"Amount of allowed requests for the last 10 minutes.",
+func newQueriesOverTimeCollector() (Collector, error) {
+	return &queriesOverTimeCollector{
+		queriesForwarded: prometheus.NewDesc(
+			prometheus.BuildFQName(namespace, "", "queries_allowed"),
+			"Amount of allowed queries for the last 10 minutes.",
 			nil, nil,
 		),
 
-		requestsBlocked: prometheus.NewDesc(
-			prometheus.BuildFQName(namespace, "", "requests_blocked"),
-			"Amount blocked requests for the last 10 minutes.",
+		queriesBlocked: prometheus.NewDesc(
+			prometheus.BuildFQName(namespace, "", "queries_blocked"),
+			"Amount blocked queries for the last 10 minutes.",
 			nil, nil,
 		),
 	}, nil
 }
 
-func (c *requestsOverTimeCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *queriesOverTimeCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
 	queriesOverTime, err := client.GetQueriesOverTime()
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (c *requestsOverTimeCollector) update(client *ftl_client.Client, ch chan<- 
 	})
 	lastForwardedOverTime := queriesOverTime.Forwarded[:1]
 	for _, hits := range lastForwardedOverTime {
-		ch <- prometheus.MustNewConstMetric(c.requestsForwarded, prometheus.GaugeValue, float64(hits.Count.Value))
+		ch <- prometheus.MustNewConstMetric(c.queriesForwarded, prometheus.GaugeValue, float64(hits.Count.Value))
 	}
 
 	sort.SliceStable(queriesOverTime.Blocked, func(i, j int) bool {
@@ -63,7 +63,7 @@ func (c *requestsOverTimeCollector) update(client *ftl_client.Client, ch chan<- 
 	})
 	lastBlockedOverTime := queriesOverTime.Blocked[:1]
 	for _, hits := range lastBlockedOverTime {
-		ch <- prometheus.MustNewConstMetric(c.requestsBlocked, prometheus.GaugeValue, float64(hits.Count.Value))
+		ch <- prometheus.MustNewConstMetric(c.queriesBlocked, prometheus.GaugeValue, float64(hits.Count.Value))
 	}
 
 	return nil

@@ -14,41 +14,25 @@
 package ftl_client
 
 import (
-	"io"
-	"log"
+	"encoding/binary"
 	"net"
 )
 
-// Client for Pi-holes's FTL daemon. Contains address to a unix socket
-type Client struct {
-	addr *net.UnixAddr
-}
-
-func NewClient(socket string) (*Client, error) {
-	addr, err := net.ResolveUnixAddr("unix", socket)
+func (client *Client) GetDBStats() (*DBStats, error) {
+	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
 	}
+	defer closeConnection(conn)
 
-	c, err := net.Dial("unix", socket)
-	if err != nil {
+	if _, err := conn.Write([]byte(">dbstats")); err != nil {
 		return nil, err
 	}
-	defer func() {
-		err := c.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
 
-	return &Client{
-		addr: addr,
-	}, nil
-}
-
-func closeConnection(c io.Closer) {
-	err := c.Close()
-	if err != nil {
-		log.Fatal(err)
+	var stats DBStats
+	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
+		return nil, err
 	}
+
+	return &stats, nil
 }
