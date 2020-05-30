@@ -21,17 +21,17 @@ import (
 
 // GetTopClients retrieves the list of clients together with amount of queries
 // made by each client from response of `>top-clients` command
-func (client *FTLClient) GetTopClients() (*DomainEntries, error) {
+func (client *FTLClient) GetTopClients() (*Entries, error) {
 	return topClientsFor(">top-clients", client)
 }
 
 // GetTopBlockedClients retrieves the list of clients together with amount of blocked
 // queries made by each client from response of `>top-clients` command
-func (client *FTLClient) GetTopBlockedClients() (*DomainEntries, error) {
+func (client *FTLClient) GetTopBlockedClients() (*Entries, error) {
 	return topClientsFor(">top-clients blocked", client)
 }
 
-func topClientsFor(command string, client *FTLClient) (*DomainEntries, error) {
+func topClientsFor(command string, client *FTLClient) (*Entries, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func topClientsFor(command string, client *FTLClient) (*DomainEntries, error) {
 		return nil, err
 	}
 
-	var result DomainEntries
+	var result Entries
 
 	if err := binary.Read(conn, binary.BigEndian, &result.Total); err != nil {
 		return nil, err
@@ -96,9 +96,9 @@ func topClientsFor(command string, client *FTLClient) (*DomainEntries, error) {
 		}
 
 		result.List = append(result.List, struct {
-			Domain string
-			Count  UInt32Block
-		}{Domain: string(address), Count: count})
+			Entry string
+			Count UInt32Block
+		}{Entry: string(address), Count: count})
 	}
 
 	return &result, nil

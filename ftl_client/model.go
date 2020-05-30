@@ -60,11 +60,11 @@ type Float32Block struct {
 	Value float32
 }
 
-type DomainEntries struct {
+type Entries struct {
 	Total UInt32Block
 	List  []struct {
-		Domain string
-		Count  UInt32Block
+		Entry string
+		Count UInt32Block
 	}
 }
 

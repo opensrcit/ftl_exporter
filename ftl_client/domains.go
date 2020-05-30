@@ -21,17 +21,17 @@ import (
 
 // GetTopDomains retrieves the list of domains together with amount of queries
 // made for each domain from response of `>top-domains` command
-func (client *FTLClient) GetTopDomains() (*DomainEntries, error) {
+func (client *FTLClient) GetTopDomains() (*Entries, error) {
 	return topQueriesFor(">top-domains", client)
 }
 
 // GetTopAds retrieves the list of ad domains together with amount of queries
 // made for each domain from response of `>top-ads` command
-func (client *FTLClient) GetTopAds() (*DomainEntries, error) {
+func (client *FTLClient) GetTopAds() (*Entries, error) {
 	return topQueriesFor(">top-ads", client)
 }
 
-func topQueriesFor(command string, client *FTLClient) (*DomainEntries, error) {
+func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func topQueriesFor(command string, client *FTLClient) (*DomainEntries, error) {
 		return nil, err
 	}
 
-	var result DomainEntries
+	var result Entries
 	if err := binary.Read(conn, binary.BigEndian, &result.Total); err != nil {
 		return nil, err
 	}
@@ -81,9 +81,9 @@ func topQueriesFor(command string, client *FTLClient) (*DomainEntries, error) {
 		}
 
 		result.List = append(result.List, struct {
-			Domain string
-			Count  UInt32Block
-		}{Domain: string(domainName), Count: domainCount})
+			Entry string
+			Count UInt32Block
+		}{Entry: string(domainName), Count: domainCount})
 	}
 
 	return &result, nil
