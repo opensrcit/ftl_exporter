@@ -23,7 +23,7 @@ import (
 // for the last 24 hours aggregated over 10 minute intervals
 // from response of `>ClientsoverTime` command
 // Warning: API might be not public
-func (client *FTLClient) GetClientsOverTime() (*ClientsOverTime, error) {
+func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -66,14 +66,10 @@ func (client *FTLClient) GetClientsOverTime() (*ClientsOverTime, error) {
 		}
 
 		timestamps = append(timestamps, TimestampClients{
-			Timestamp: UInt32Block{
-				Value: timestamp,
-			},
-			Count: clients,
+			Timestamp: timestamp,
+			Count:     clients,
 		})
 	}
 
-	return &ClientsOverTime{
-		List: timestamps,
-	}, nil
+	return &timestamps, nil
 }

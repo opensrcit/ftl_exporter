@@ -55,16 +55,14 @@ func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 			return nil, err
 		}
 
-		var domainCount UInt32Block
-
-		err = binary.Read(conn, binary.BigEndian, &domainCount)
+		domainCount, err := readUint32(conn)
 		if err != nil {
 			return nil, err
 		}
 
 		result.List = append(result.List, struct {
 			Entry string
-			Count UInt32Block
+			Count uint32
 		}{Entry: domainName, Count: domainCount})
 	}
 

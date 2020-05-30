@@ -45,7 +45,7 @@ func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error
 			return nil, err
 		}
 
-		percentage, err := readFloat(conn)
+		percentage, err := readFloat32(conn)
 		if err != nil {
 			return nil, err
 		}

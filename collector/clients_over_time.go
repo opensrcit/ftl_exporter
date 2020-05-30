@@ -51,10 +51,10 @@ func (c *clientsOverTimeCollector) update(client *ftl_client.FTLClient, ch chan<
 		return err
 	}
 
-	sort.SliceStable(clientsOverTime.List, func(i, j int) bool {
-		return clientsOverTime.List[i].Timestamp.Value > clientsOverTime.List[j].Timestamp.Value
+	sort.SliceStable(*clientsOverTime, func(i, j int) bool {
+		return (*clientsOverTime)[i].Timestamp > (*clientsOverTime)[j].Timestamp
 	})
-	lastClientsOverTime := clientsOverTime.List[:1]
+	lastClientsOverTime := (*clientsOverTime)[:1]
 	for _, hits := range lastClientsOverTime {
 		for i, count := range hits.Count {
 			address := fmt.Sprintf("address_%d", i)

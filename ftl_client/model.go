@@ -62,7 +62,7 @@ type Entries struct {
 	Total UInt32Block
 	List  []struct {
 		Entry string
-		Count UInt32Block
+		Count uint32
 	}
 }
 
@@ -78,7 +78,7 @@ type TimestampCount struct {
 }
 
 type TimestampClients struct {
-	Timestamp UInt32Block
+	Timestamp uint32
 	Count     []Int32Block
 }
 

@@ -40,7 +40,7 @@ func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 			return nil, err
 		}
 
-		percentage, err := readFloat(conn)
+		percentage, err := readFloat32(conn)
 		if err != nil {
 			return nil, err
 		}

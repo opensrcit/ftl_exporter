@@ -61,16 +61,14 @@ func topClientsFor(command string, client *FTLClient) (*Entries, error) {
 			return nil, err
 		}
 
-		var count UInt32Block
-
-		err = binary.Read(conn, binary.BigEndian, &count)
+		count, err := readUint32(conn)
 		if err != nil {
 			return nil, err
 		}
 
 		result.List = append(result.List, struct {
 			Entry string
-			Count UInt32Block
+			Count uint32
 		}{Entry: address, Count: count})
 	}
 
