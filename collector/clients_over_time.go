@@ -40,7 +40,7 @@ func newClientsOverTimeCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *clientsOverTimeCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *clientsOverTimeCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	clientsOverTime, err := client.GetClientsOverTime()
 	if err != nil {
 		return err

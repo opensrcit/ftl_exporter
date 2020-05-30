@@ -19,13 +19,13 @@ import (
 	"net"
 )
 
-// Client for Pi-holes's FTL daemon. Contains address to a unix socket
-type Client struct {
+// FTLClient for Pi-holes's FTL daemon. Contains address to a unix socket
+type FTLClient struct {
 	addr *net.UnixAddr
 }
 
 // NewClient creates the Pi-hole's FTL engine client
-func NewClient(socket string) (*Client, error) {
+func NewClient(socket string) (*FTLClient, error) {
 	addr, err := net.ResolveUnixAddr("unix", socket)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func NewClient(socket string) (*Client, error) {
 		}
 	}()
 
-	return &Client{
+	return &FTLClient{
 		addr: addr,
 	}, nil
 }

@@ -43,7 +43,7 @@ func newAdDomainCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *adDomainCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *adDomainCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	queries, err := client.GetTopAds()
 	if err != nil {
 		return err

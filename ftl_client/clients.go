@@ -21,17 +21,17 @@ import (
 
 // GetTopClients retrieves the list of clients together with amount of queries
 // made by each client from response of `>top-clients` command
-func (client *Client) GetTopClients() (*DomainEntries, error) {
+func (client *FTLClient) GetTopClients() (*DomainEntries, error) {
 	return topClientsFor(">top-clients", client)
 }
 
 // GetTopBlockedClients retrieves the list of clients together with amount of blocked
 // queries made by each client from response of `>top-clients` command
-func (client *Client) GetTopBlockedClients() (*DomainEntries, error) {
+func (client *FTLClient) GetTopBlockedClients() (*DomainEntries, error) {
 	return topClientsFor(">top-clients blocked", client)
 }
 
-func topClientsFor(command string, client *Client) (*DomainEntries, error) {
+func topClientsFor(command string, client *FTLClient) (*DomainEntries, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err

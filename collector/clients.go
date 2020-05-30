@@ -43,7 +43,7 @@ func newClientCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *clientCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *clientCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	clients, err := client.GetTopClients()
 	if err != nil {
 		return err

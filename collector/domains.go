@@ -43,7 +43,7 @@ func newDomainCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *domainCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *domainCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	queries, err := client.GetTopDomains()
 	if err != nil {
 		return err

@@ -21,7 +21,7 @@ import (
 // GetQueriesOverTime retrieves amount of allowed and blocked queries
 // for the last 24 hours aggregated over 10 minute intervals
 // from response of `>overTime` command
-func (client *Client) GetQueriesOverTime() (*OverTime, error) {
+func (client *FTLClient) GetQueriesOverTime() (*OverTime, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err

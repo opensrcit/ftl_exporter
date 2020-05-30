@@ -44,7 +44,7 @@ func newQueriesOverTimeCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *queriesOverTimeCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *queriesOverTimeCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	queriesOverTime, err := client.GetQueriesOverTime()
 	if err != nil {
 		return err

@@ -21,17 +21,17 @@ import (
 
 // GetTopDomains retrieves the list of domains together with amount of queries
 // made for each domain from response of `>top-domains` command
-func (client *Client) GetTopDomains() (*DomainEntries, error) {
+func (client *FTLClient) GetTopDomains() (*DomainEntries, error) {
 	return topQueriesFor(">top-domains", client)
 }
 
 // GetTopAds retrieves the list of ad domains together with amount of queries
 // made for each domain from response of `>top-ads` command
-func (client *Client) GetTopAds() (*DomainEntries, error) {
+func (client *FTLClient) GetTopAds() (*DomainEntries, error) {
 	return topQueriesFor(">top-ads", client)
 }
 
-func topQueriesFor(command string, client *Client) (*DomainEntries, error) {
+func topQueriesFor(command string, client *FTLClient) (*DomainEntries, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err

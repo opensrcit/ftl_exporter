@@ -45,7 +45,7 @@ func newDbStatsCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *dbStatsCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *dbStatsCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	dbStats, err := client.GetDBStats()
 	if err != nil {
 		return err

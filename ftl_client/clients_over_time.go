@@ -23,7 +23,7 @@ import (
 // for the last 24 hours aggregated over 10 minute intervals
 // from response of `>ClientsoverTime` command
 // Warning: API might be not public
-func (client *Client) GetClientsOverTime() (*ClientsOverTime, error) {
+func (client *FTLClient) GetClientsOverTime() (*ClientsOverTime, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err

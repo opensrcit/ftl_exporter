@@ -99,7 +99,7 @@ func newStatsCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *statsCollector) update(client *ftl_client.Client, ch chan<- prometheus.Metric) error {
+func (c *statsCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
 	stats, err := client.GetStats()
 	if err != nil {
 		return err

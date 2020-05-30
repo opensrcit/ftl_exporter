@@ -72,7 +72,7 @@ func registerCollector(collector string, isDefaultEnabled bool, factory func() (
 // Exporter represents exporter and has a link to the client
 type Exporter struct {
 	collectors map[string]Collector
-	client     *ftl_client.Client
+	client     *ftl_client.FTLClient
 }
 
 // NewExporter creates exporter using the provided socket path
@@ -123,7 +123,7 @@ func (collector Exporter) Collect(ch chan<- prometheus.Metric) {
 	wg.Wait()
 }
 
-func execute(name string, c Collector, client *ftl_client.Client, ch chan<- prometheus.Metric) {
+func execute(name string, c Collector, client *ftl_client.FTLClient, ch chan<- prometheus.Metric) {
 	begin := time.Now()
 	err := c.update(client, ch)
 	duration := time.Since(begin)
@@ -139,5 +139,5 @@ func execute(name string, c Collector, client *ftl_client.Client, ch chan<- prom
 // Collector is the interface a collector has to implement.
 type Collector interface {
 	// Get new metrics and expose them via prometheus registry.
-	update(client *ftl_client.Client, ch chan<- prometheus.Metric) error
+	update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error
 }
