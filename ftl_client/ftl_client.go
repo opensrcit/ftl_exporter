@@ -65,11 +65,15 @@ func NewClient(socket string) (*FTLClient, error) {
 func readString(conn *net.UnixConn) ([]byte, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
-		if err == io.EOF || format == formatEOF {
+		if err == io.EOF {
 			return nil, EOF
 		}
 
 		return nil, err
+	}
+
+	if format == formatEOF {
+		return nil, EOF
 	}
 
 	if format != formatString {
