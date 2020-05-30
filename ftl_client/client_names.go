@@ -21,7 +21,7 @@ import (
 
 // GetClientNames retrieves ordered list of client's names from
 // response of `>client-names` command
-func (client *FTLClient) GetClientNames() (*Clients, error) {
+func (client *FTLClient) GetClientNames() (*[]Client, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (client *FTLClient) GetClientNames() (*Clients, error) {
 		return nil, err
 	}
 
-	var clients Clients
+	var clients []Client
 	for {
 		var format uint8
 		err := binary.Read(conn, binary.BigEndian, &format)
@@ -76,7 +76,7 @@ func (client *FTLClient) GetClientNames() (*Clients, error) {
 			return nil, err
 		}
 
-		clients.List = append(clients.List, struct {
+		clients = append(clients, struct {
 			Name    string
 			Address string
 		}{Name: string(name), Address: string(address)})

@@ -93,11 +93,9 @@ type ClientsOverTime struct {
 	List []TimestampClients
 }
 
-type Clients struct {
-	List []struct {
-		Name    string
-		Address string
-	}
+type Client struct {
+	Name    string
+	Address string
 }
 
 type OverTime struct {

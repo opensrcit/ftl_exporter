@@ -58,8 +58,8 @@ func (c *clientsOverTimeCollector) update(client *ftl_client.FTLClient, ch chan<
 	for _, hits := range lastClientsOverTime {
 		for i, count := range hits.Count {
 			address := fmt.Sprintf("address_%d", i)
-			if i < len(clientNames.List) {
-				address = clientNames.List[i].Address
+			if i < len(*clientNames) {
+				address = (*clientNames)[i].Address
 			}
 			ch <- prometheus.MustNewConstMetric(
 				c.clients,
