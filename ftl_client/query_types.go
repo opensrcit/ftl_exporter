@@ -19,6 +19,8 @@ import (
 	"net"
 )
 
+// GetQueryTypes retrieves query type and their percentages among all queries
+// from response of `>querytypes` command
 func (client *Client) GetQueryTypes() (*[]PercentageEntry, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {

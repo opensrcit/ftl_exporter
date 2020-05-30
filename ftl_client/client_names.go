@@ -19,6 +19,8 @@ import (
 	"net"
 )
 
+// GetClientNames retrieves ordered list of client's names from
+// response of `>client-names` command
 func (client *Client) GetClientNames() (*Clients, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {

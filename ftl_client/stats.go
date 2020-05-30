@@ -18,6 +18,7 @@ import (
 	"net"
 )
 
+// GetStats retrieves engine statistics from response of `>stats` command
 func (client *Client) GetStats() (*Stats, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {

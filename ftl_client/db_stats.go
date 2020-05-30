@@ -18,6 +18,7 @@ import (
 	"net"
 )
 
+// GetDBStats retrieves database statistics from response of `>dbstats` command
 func (client *Client) GetDBStats() (*DBStats, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {

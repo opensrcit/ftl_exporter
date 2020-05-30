@@ -24,6 +24,7 @@ type Client struct {
 	addr *net.UnixAddr
 }
 
+// NewClient creates the Pi-hole's FTL engine client
 func NewClient(socket string) (*Client, error) {
 	addr, err := net.ResolveUnixAddr("unix", socket)
 	if err != nil {

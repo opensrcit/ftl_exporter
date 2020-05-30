@@ -19,10 +19,14 @@ import (
 	"net"
 )
 
+// GetTopClients retrieves the list of clients together with amount of queries
+// made by each client from response of `>top-clients` command
 func (client *Client) GetTopClients() (*DomainEntries, error) {
 	return topClientsFor(">top-clients", client)
 }
 
+// GetTopBlockedClients retrieves the list of clients together with amount of blocked
+// queries made by each client from response of `>top-clients` command
 func (client *Client) GetTopBlockedClients() (*DomainEntries, error) {
 	return topClientsFor(">top-clients blocked", client)
 }

@@ -19,10 +19,14 @@ import (
 	"net"
 )
 
+// GetTopDomains retrieves the list of domains together with amount of queries
+// made for each domain from response of `>top-domains` command
 func (client *Client) GetTopDomains() (*DomainEntries, error) {
 	return topQueriesFor(">top-domains", client)
 }
 
+// GetTopAds retrieves the list of ad domains together with amount of queries
+// made for each domain from response of `>top-ads` command
 func (client *Client) GetTopAds() (*DomainEntries, error) {
 	return topQueriesFor(">top-ads", client)
 }

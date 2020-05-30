@@ -19,6 +19,8 @@ import (
 	"net"
 )
 
+// GetForwardDestinations retrieves forward destination with amount
+// of queries forwarded to them from response of `>forward-dest` command
 func (client *Client) GetForwardDestinations() (*[]UpstreamDestination, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
