@@ -15,7 +15,6 @@ package ftl_client
 
 import (
 	"encoding/binary"
-	"io"
 	"net"
 )
 
@@ -48,27 +47,10 @@ func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 	}
 
 	for {
-		var format uint8
-		err := binary.Read(conn, binary.BigEndian, &format)
-
-		if err == io.EOF || format == formatEOF {
+		domainName, err := readString(conn)
+		if err == EOF {
 			break
 		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		var length uint32
-
-		err = binary.Read(conn, binary.BigEndian, &length)
-		if err != nil {
-			return nil, err
-		}
-
-		domainName := make([]byte, length)
-
-		err = binary.Read(conn, binary.BigEndian, &domainName)
 		if err != nil {
 			return nil, err
 		}

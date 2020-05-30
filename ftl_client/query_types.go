@@ -15,7 +15,6 @@ package ftl_client
 
 import (
 	"encoding/binary"
-	"io"
 	"net"
 )
 
@@ -34,27 +33,10 @@ func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 
 	queryTypes := make(map[string]float32)
 	for {
-		var format uint8
-		err := binary.Read(conn, binary.BigEndian, &format)
-
-		if err == io.EOF || format == formatEOF {
+		name, err := readString(conn)
+		if err == EOF {
 			break
 		}
-
-		if err != nil {
-			return nil, err
-		}
-
-		var length uint32
-
-		err = binary.Read(conn, binary.BigEndian, &length)
-		if err != nil {
-			return nil, err
-		}
-
-		name := make([]byte, length)
-
-		err = binary.Read(conn, binary.BigEndian, &name)
 		if err != nil {
 			return nil, err
 		}

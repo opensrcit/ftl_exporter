@@ -14,10 +14,25 @@
 package ftl_client
 
 import (
+	"encoding/binary"
+	"errors"
 	"io"
 	"log"
 	"net"
 )
+
+const (
+	formatInt32   uint8 = 0xd2 // 210
+	formatFloat32 uint8 = 0xca // 202
+	formatUInt8   uint8 = 0xcc // 204
+	formatString  uint8 = 0xdb // 219
+	formatMap16   uint8 = 0xde // 222
+
+	formatEOF uint8 = 0xc1 // 193
+)
+
+var EOF = errors.New("EOF")
+var invalidFormat = errors.New("unexpected format")
 
 // FTLClient for Pi-holes's FTL daemon. Contains address to a unix socket
 type FTLClient struct {
@@ -45,6 +60,34 @@ func NewClient(socket string) (*FTLClient, error) {
 	return &FTLClient{
 		addr: addr,
 	}, nil
+}
+
+func readString(conn *net.UnixConn) ([]byte, error) {
+	var format uint8
+	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
+		if err == io.EOF || format == formatEOF {
+			return nil, EOF
+		}
+
+		return nil, err
+	}
+
+	if format != formatString {
+		return nil, invalidFormat
+	}
+
+	var length uint32
+	if err := binary.Read(conn, binary.BigEndian, &length); err != nil {
+		return nil, err
+	}
+
+	address := make([]byte, length)
+
+	if err := binary.Read(conn, binary.BigEndian, &address); err != nil {
+		return nil, err
+	}
+
+	return address, nil
 }
 
 func closeConnection(c io.Closer) {

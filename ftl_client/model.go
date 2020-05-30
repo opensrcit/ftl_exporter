@@ -13,8 +13,6 @@
 
 package ftl_client
 
-const formatEOF uint8 = 0xc1 // 193
-
 // Stats represents the response of `>stats` command
 type Stats struct {
 	DomainsBeingBlocked UInt32Block
