@@ -43,7 +43,7 @@ func (c *forwardDestinationCollector) update(client *ftl_client.FTLClient, ch ch
 	}
 
 	for _, hits := range *destinations {
-		ch <- prometheus.MustNewConstMetric(c.forwardDestinationsToday, prometheus.GaugeValue, float64(hits.Percentage.Value), hits.Address)
+		ch <- prometheus.MustNewConstMetric(c.forwardDestinationsToday, prometheus.GaugeValue, float64(hits.Percentage), hits.Address)
 	}
 
 	return nil

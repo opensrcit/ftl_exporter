@@ -14,7 +14,6 @@
 package ftl_client
 
 import (
-	"encoding/binary"
 	"net"
 )
 
@@ -46,9 +45,7 @@ func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error
 			return nil, err
 		}
 
-		var percentage Float32Block
-
-		err = binary.Read(conn, binary.BigEndian, &percentage)
+		percentage, err := readFloat(conn)
 		if err != nil {
 			return nil, err
 		}

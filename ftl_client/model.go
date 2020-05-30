@@ -66,15 +66,10 @@ type Entries struct {
 	}
 }
 
-type PercentageEntry struct {
-	Entry      string
-	Percentage Float32Block
-}
-
 type UpstreamDestination struct {
 	Name       string
 	Address    string
-	Percentage Float32Block
+	Percentage float32
 }
 
 type TimestampCount struct {
