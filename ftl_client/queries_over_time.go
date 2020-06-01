@@ -28,7 +28,7 @@ func (client *FTLClient) GetQueriesOverTime() (*OverTime, error) {
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(">overTime")); err != nil {
+	if err := sendCommand(conn, ">overTime"); err != nil {
 		return nil, err
 	}
 

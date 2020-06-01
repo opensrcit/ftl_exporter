@@ -146,6 +146,14 @@ func readUint32(conn *net.UnixConn) (uint32, error) {
 	return value, nil
 }
 
+func sendCommand(conn *net.UnixConn, command string) error {
+	if _, err := conn.Write([]byte(command)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func closeConnection(c io.Closer) {
 	err := c.Close()
 	if err != nil {

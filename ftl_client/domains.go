@@ -37,7 +37,7 @@ func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(command)); err != nil {
+	if err := sendCommand(conn, command); err != nil {
 		return nil, err
 	}
 

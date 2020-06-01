@@ -26,7 +26,7 @@ func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(">forward-dest")); err != nil {
+	if err := sendCommand(conn, ">forward-dest"); err != nil {
 		return nil, err
 	}
 

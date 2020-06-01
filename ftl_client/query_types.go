@@ -26,7 +26,7 @@ func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(">querytypes")); err != nil {
+	if err := sendCommand(conn, ">querytypes"); err != nil {
 		return nil, err
 	}
 

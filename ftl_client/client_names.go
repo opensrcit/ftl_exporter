@@ -26,7 +26,7 @@ func (client *FTLClient) GetClientNames() (*[]Client, error) {
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(">client-names")); err != nil {
+	if err := sendCommand(conn, ">client-names"); err != nil {
 		return nil, err
 	}
 

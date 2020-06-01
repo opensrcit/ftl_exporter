@@ -30,7 +30,7 @@ func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(">ClientsoverTime")); err != nil {
+	if err := sendCommand(conn, ">ClientsoverTime"); err != nil {
 		return nil, err
 	}
 

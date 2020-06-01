@@ -26,7 +26,7 @@ func (client *FTLClient) GetStats() (*Stats, error) {
 	}
 	defer closeConnection(conn)
 
-	if _, err := conn.Write([]byte(">stats")); err != nil {
+	if err := sendCommand(conn, ">stats"); err != nil {
 		return nil, err
 	}
 
