@@ -105,16 +105,16 @@ func (c *statsCollector) update(client *ftl_client.FTLClient, ch chan<- promethe
 		return err
 	}
 
-	ch <- prometheus.MustNewConstMetric(c.domainsBeingBlocked, prometheus.GaugeValue, float64(stats.DomainsBeingBlocked.Value))
-	ch <- prometheus.MustNewConstMetric(c.dnsQueriesToday, prometheus.GaugeValue, float64(stats.DnsQueries.Value))
-	ch <- prometheus.MustNewConstMetric(c.adsBlockedToday, prometheus.GaugeValue, float64(stats.AdsBlocked.Value))
-	ch <- prometheus.MustNewConstMetric(c.adsPercentageToday, prometheus.GaugeValue, float64(stats.AdsPercentage.Value))
-	ch <- prometheus.MustNewConstMetric(c.uniqueDomainsToday, prometheus.GaugeValue, float64(stats.UniqueDomains.Value))
-	ch <- prometheus.MustNewConstMetric(c.queriesForwardedToday, prometheus.GaugeValue, float64(stats.QueriesForwarded.Value))
-	ch <- prometheus.MustNewConstMetric(c.queriesCachedToday, prometheus.GaugeValue, float64(stats.QueriesCached.Value))
-	ch <- prometheus.MustNewConstMetric(c.clientsEverSeen, prometheus.GaugeValue, float64(stats.ClientsEverSeen.Value))
-	ch <- prometheus.MustNewConstMetric(c.uniqueClients, prometheus.GaugeValue, float64(stats.UniqueClients.Value))
-	ch <- prometheus.MustNewConstMetric(c.status, prometheus.GaugeValue, float64(stats.Status.Value))
+	ch <- prometheus.MustNewConstMetric(c.domainsBeingBlocked, prometheus.GaugeValue, float64(stats.DomainsBeingBlocked))
+	ch <- prometheus.MustNewConstMetric(c.dnsQueriesToday, prometheus.GaugeValue, float64(stats.DnsQueriesToday))
+	ch <- prometheus.MustNewConstMetric(c.adsBlockedToday, prometheus.GaugeValue, float64(stats.AdsBlockedToday))
+	ch <- prometheus.MustNewConstMetric(c.adsPercentageToday, prometheus.GaugeValue, float64(stats.AdsPercentageToday))
+	ch <- prometheus.MustNewConstMetric(c.uniqueDomainsToday, prometheus.GaugeValue, float64(stats.UniqueDomains))
+	ch <- prometheus.MustNewConstMetric(c.queriesForwardedToday, prometheus.GaugeValue, float64(stats.QueriesForwarded))
+	ch <- prometheus.MustNewConstMetric(c.queriesCachedToday, prometheus.GaugeValue, float64(stats.QueriesCached))
+	ch <- prometheus.MustNewConstMetric(c.clientsEverSeen, prometheus.GaugeValue, float64(stats.ClientsEverSeen))
+	ch <- prometheus.MustNewConstMetric(c.uniqueClients, prometheus.GaugeValue, float64(stats.UniqueClients))
+	ch <- prometheus.MustNewConstMetric(c.status, prometheus.GaugeValue, float64(stats.Status))
 
 	return nil
 }

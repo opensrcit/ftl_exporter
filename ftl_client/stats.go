@@ -30,10 +30,32 @@ func (client *FTLClient) GetStats() (*Stats, error) {
 		return nil, err
 	}
 
-	var stats Stats
+	var stats struct {
+		DomainsBeingBlocked UInt32Block
+		DnsQueriesToday     UInt32Block
+		AdsBlockedToday     UInt32Block
+		AdsPercentageToday  Float32Block
+		UniqueDomains       UInt32Block
+		QueriesForwarded    UInt32Block
+		QueriesCached       UInt32Block
+		ClientsEverSeen     UInt32Block
+		UniqueClients       UInt32Block
+		Status              UInt8Block
+	}
 	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
 		return nil, err
 	}
 
-	return &stats, nil
+	return &Stats{
+		DomainsBeingBlocked: int(stats.DomainsBeingBlocked.Value),
+		DnsQueriesToday:     int(stats.DnsQueriesToday.Value),
+		AdsBlockedToday:     int(stats.AdsBlockedToday.Value),
+		AdsPercentageToday:  stats.AdsPercentageToday.Value,
+		UniqueDomains:       int(stats.UniqueDomains.Value),
+		QueriesForwarded:    int(stats.QueriesForwarded.Value),
+		QueriesCached:       int(stats.QueriesCached.Value),
+		ClientsEverSeen:     int(stats.ClientsEverSeen.Value),
+		UniqueClients:       int(stats.UniqueClients.Value),
+		Status:              int(stats.Status.Value),
+	}, nil
 }

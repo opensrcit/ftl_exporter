@@ -15,16 +15,16 @@ package ftl_client
 
 // Stats represents the response of `>stats` command
 type Stats struct {
-	DomainsBeingBlocked UInt32Block
-	DnsQueries          UInt32Block
-	AdsBlocked          UInt32Block
-	AdsPercentage       Float32Block
-	UniqueDomains       UInt32Block
-	QueriesForwarded    UInt32Block
-	QueriesCached       UInt32Block
-	ClientsEverSeen     UInt32Block
-	UniqueClients       UInt32Block
-	Status              UInt8Block
+	DomainsBeingBlocked int
+	DnsQueriesToday     int
+	AdsBlockedToday     int
+	AdsPercentageToday  float32
+	UniqueDomains       int
+	QueriesForwarded    int
+	QueriesCached       int
+	ClientsEverSeen     int
+	UniqueClients       int
+	Status              int
 }
 
 // DBStats represents the response of `>db-stats` command
