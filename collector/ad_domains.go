@@ -49,10 +49,10 @@ func (c *adDomainCollector) update(client *client.FTLClient, ch chan<- prometheu
 		return err
 	}
 
-	ch <- prometheus.MustNewConstMetric(c.totalAdDomainsToday, prometheus.GaugeValue, float64(queries.Total.Value))
+	ch <- prometheus.MustNewConstMetric(c.totalAdDomainsToday, prometheus.GaugeValue, float64(queries.Total))
 
-	for _, hits := range queries.List {
-		ch <- prometheus.MustNewConstMetric(c.topAdDomainsToday, prometheus.GaugeValue, float64(hits.Count), hits.Entry)
+	for _, hits := range queries.Entries {
+		ch <- prometheus.MustNewConstMetric(c.topAdDomainsToday, prometheus.GaugeValue, float64(hits.Count), hits.Label)
 	}
 
 	return nil

@@ -27,71 +27,79 @@ type Stats struct {
 	Status              int
 }
 
-// DBStats represents the response of `>db-stats` command
+// DBStats represents the response of `>db-stats` command.
+// It contains amount of rows in database and current file size of the database
 type DBStats struct {
-	Rows UInt32Block
-	Size UInt64Block
+	RowsCount int
+	FileSize  int
 }
 
-type UInt32Block struct {
-	_     uint8
-	Value uint32
-}
-
-type Int32Block struct {
-	_     uint8
-	Value int32
-}
-
-type UInt64Block struct {
-	_     uint8
-	Value uint64
-}
-
-type UInt8Block struct {
-	_     uint8
-	Value uint8
-}
-
-type Float32Block struct {
-	_     uint8
-	Value float32
-}
-
-type Entries struct {
-	Total UInt32Block
-	List  []struct {
-		Entry string
-		Count uint32
+// TopEntries represents the response of `>top-clients` and `>top-domains` commands.
+// It contains a total amount of entries and a list of entries label and count
+type TopEntries struct {
+	Total   int
+	Entries []struct {
+		Label string
+		Count int
 	}
 }
 
+// UpstreamDestination represents the response `>forward-dest` command.
+// It contains a name, address and percentage of total requests
 type UpstreamDestination struct {
 	Name       string
 	Address    string
 	Percentage float32
 }
 
-type TimestampCount struct {
-	Timestamp UInt32Block
-	Count     UInt32Block
-}
-
+// TimestampClients represents the response `>ClientsoverTime` command.
+// It contains a timestamp and a list of amount of requests made by each client.
+// Order of requests counts represents clients from `>client-names` command
 type TimestampClients struct {
-	Timestamp uint32
-	Count     []Int32Block
+	Timestamp int
+	Count     []int
 }
 
-type ClientsOverTime struct {
-	List []TimestampClients
-}
-
+// Client represents the response `>client-names` command.
+// It contains a name and address of the client
 type Client struct {
 	Name    string
 	Address string
 }
 
-type OverTime struct {
-	Forwarded []TimestampCount
-	Blocked   []TimestampCount
+// QueriesOverTime represents the response `>overTime` command.
+// It contains list of amounts of forwarded and blocked requests grouped by 10 minute intervals
+type QueriesOverTime struct {
+	Forwarded []timestampCount
+	Blocked   []timestampCount
+}
+
+type timestampCount struct {
+	Timestamp int
+	Count     int
+}
+
+type ftlUInt32 struct {
+	_     uint8
+	Value uint32
+}
+
+type ftlUInt64 struct {
+	_     uint8
+	Value uint64
+}
+
+type ftlInt32 struct {
+	_     uint8
+	Value int32
+}
+
+type ftlInt8 struct {
+	_     uint8
+	Value uint8
+}
+
+type ftlFloat32 struct {
+	_     uint8
+	Value float32
 }

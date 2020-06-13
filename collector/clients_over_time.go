@@ -64,7 +64,7 @@ func (c *clientsOverTimeCollector) update(client *client.FTLClient, ch chan<- pr
 			ch <- prometheus.MustNewConstMetric(
 				c.clients,
 				prometheus.GaugeValue,
-				float64(count.Value),
+				float64(count),
 				address,
 			)
 		}

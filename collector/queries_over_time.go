@@ -51,19 +51,19 @@ func (c *queriesOverTimeCollector) update(client *client.FTLClient, ch chan<- pr
 	}
 
 	sort.SliceStable(queriesOverTime.Forwarded, func(i, j int) bool {
-		return queriesOverTime.Forwarded[i].Timestamp.Value > queriesOverTime.Forwarded[j].Timestamp.Value
+		return queriesOverTime.Forwarded[i].Timestamp > queriesOverTime.Forwarded[j].Timestamp
 	})
 	lastForwardedOverTime := queriesOverTime.Forwarded[:1]
 	for _, hits := range lastForwardedOverTime {
-		ch <- prometheus.MustNewConstMetric(c.queriesForwarded, prometheus.GaugeValue, float64(hits.Count.Value))
+		ch <- prometheus.MustNewConstMetric(c.queriesForwarded, prometheus.GaugeValue, float64(hits.Count))
 	}
 
 	sort.SliceStable(queriesOverTime.Blocked, func(i, j int) bool {
-		return queriesOverTime.Blocked[i].Timestamp.Value > queriesOverTime.Blocked[j].Timestamp.Value
+		return queriesOverTime.Blocked[i].Timestamp > queriesOverTime.Blocked[j].Timestamp
 	})
 	lastBlockedOverTime := queriesOverTime.Blocked[:1]
 	for _, hits := range lastBlockedOverTime {
-		ch <- prometheus.MustNewConstMetric(c.queriesBlocked, prometheus.GaugeValue, float64(hits.Count.Value))
+		ch <- prometheus.MustNewConstMetric(c.queriesBlocked, prometheus.GaugeValue, float64(hits.Count))
 	}
 
 	return nil

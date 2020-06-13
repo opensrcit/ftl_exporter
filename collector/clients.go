@@ -49,8 +49,8 @@ func (c *clientCollector) update(client *client.FTLClient, ch chan<- prometheus.
 		return err
 	}
 
-	for _, hits := range clients.List {
-		ch <- prometheus.MustNewConstMetric(c.topClientsToday, prometheus.GaugeValue, float64(hits.Count), hits.Entry)
+	for _, hits := range clients.Entries {
+		ch <- prometheus.MustNewConstMetric(c.topClientsToday, prometheus.GaugeValue, float64(hits.Count), hits.Label)
 	}
 
 	blockedClients, err := client.GetTopBlockedClients()
@@ -58,8 +58,8 @@ func (c *clientCollector) update(client *client.FTLClient, ch chan<- prometheus.
 		return err
 	}
 
-	for _, hits := range blockedClients.List {
-		ch <- prometheus.MustNewConstMetric(c.topBlockedClientsToday, prometheus.GaugeValue, float64(hits.Count), hits.Entry)
+	for _, hits := range blockedClients.Entries {
+		ch <- prometheus.MustNewConstMetric(c.topBlockedClientsToday, prometheus.GaugeValue, float64(hits.Count), hits.Label)
 	}
 
 	return nil

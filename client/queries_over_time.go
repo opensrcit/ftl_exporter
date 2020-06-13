@@ -21,7 +21,7 @@ import (
 // GetQueriesOverTime retrieves amount of allowed and blocked queries
 // for the last 24 hours aggregated over 10 minute intervals
 // from response of `>overTime` command
-func (client *FTLClient) GetQueriesOverTime() (*OverTime, error) {
+func (client *FTLClient) GetQueriesOverTime() (*QueriesOverTime, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -32,6 +32,8 @@ func (client *FTLClient) GetQueriesOverTime() (*OverTime, error) {
 		return nil, err
 	}
 
+	var result QueriesOverTime
+
 	var lines struct {
 		_     uint8
 		Lines uint16
@@ -40,24 +42,39 @@ func (client *FTLClient) GetQueriesOverTime() (*OverTime, error) {
 		return nil, err
 	}
 
-	forwarded := make([]TimestampCount, lines.Lines)
-
-	if err := binary.Read(conn, binary.BigEndian, &forwarded); err != nil {
+	response := make([]struct {
+		Timestamp ftlUInt32
+		Count     ftlUInt32
+	}, lines.Lines)
+	if err := binary.Read(conn, binary.BigEndian, &response); err != nil {
 		return nil, err
+	}
+
+	for _, r := range response {
+		result.Forwarded = append(result.Forwarded, struct {
+			Timestamp int
+			Count     int
+		}{Timestamp: int(r.Timestamp.Value), Count: int(r.Count.Value)})
 	}
 
 	if err := binary.Read(conn, binary.BigEndian, &lines); err != nil {
 		return nil, err
 	}
 
-	blocked := make([]TimestampCount, lines.Lines)
-
-	if err := binary.Read(conn, binary.BigEndian, &blocked); err != nil {
+	response = make([]struct {
+		Timestamp ftlUInt32
+		Count     ftlUInt32
+	}, lines.Lines)
+	if err := binary.Read(conn, binary.BigEndian, &response); err != nil {
 		return nil, err
 	}
 
-	return &OverTime{
-		Forwarded: forwarded,
-		Blocked:   blocked,
-	}, nil
+	for _, r := range response {
+		result.Blocked = append(result.Blocked, struct {
+			Timestamp int
+			Count     int
+		}{Timestamp: int(r.Timestamp.Value), Count: int(r.Count.Value)})
+	}
+
+	return &result, nil
 }

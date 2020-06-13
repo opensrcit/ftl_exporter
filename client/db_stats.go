@@ -30,10 +30,16 @@ func (client *FTLClient) GetDBStats() (*DBStats, error) {
 		return nil, err
 	}
 
-	var stats DBStats
+	var stats struct {
+		Rows ftlUInt32
+		Size ftlUInt64
+	}
 	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
 		return nil, err
 	}
 
-	return &stats, nil
+	return &DBStats{
+		RowsCount: int(stats.Rows.Value),
+		FileSize:  int(stats.Size.Value),
+	}, nil
 }

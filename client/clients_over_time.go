@@ -43,7 +43,7 @@ func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 			break
 		}
 
-		var clients []Int32Block
+		var clients []int
 
 		var timestamp uint32
 		err = binary.Read(conn, binary.BigEndian, &timestamp)
@@ -52,7 +52,7 @@ func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 		}
 
 		for {
-			var clientQueryCount Int32Block
+			var clientQueryCount ftlInt32
 			err := binary.Read(conn, binary.BigEndian, &clientQueryCount)
 			if err != nil {
 				return nil, err
@@ -62,11 +62,11 @@ func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 				break
 			}
 
-			clients = append(clients, clientQueryCount)
+			clients = append(clients, int(clientQueryCount.Value))
 		}
 
 		timestamps = append(timestamps, TimestampClients{
-			Timestamp: timestamp,
+			Timestamp: int(timestamp),
 			Count:     clients,
 		})
 	}
