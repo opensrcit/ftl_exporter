@@ -31,7 +31,7 @@ func (client *FTLClient) GetDBStats() (*DBStats, error) {
 	}
 
 	var stats struct {
-		Rows ftlUInt32
+		Rows ftlInt32
 		Size ftlUInt64
 	}
 	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {

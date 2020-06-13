@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	formatUint32  uint8 = 0xd2 // 210
+	formatInt32   uint8 = 0xd2 // 210
 	formatFloat32 uint8 = 0xca // 202
 	formatUInt8   uint8 = 0xcc // 204
 	formatString  uint8 = 0xdb // 219
@@ -120,7 +120,7 @@ func readFloat32(conn *net.UnixConn) (float32, error) {
 	return value, nil
 }
 
-func readUint32(conn *net.UnixConn) (uint32, error) {
+func readInt32(conn *net.UnixConn) (int, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
@@ -134,7 +134,7 @@ func readUint32(conn *net.UnixConn) (uint32, error) {
 		return 0, errEndOfInput
 	}
 
-	if format != formatUint32 {
+	if format != formatInt32 {
 		return 0, errInvalidFormat
 	}
 
@@ -143,7 +143,7 @@ func readUint32(conn *net.UnixConn) (uint32, error) {
 		return 0, err
 	}
 
-	return value, nil
+	return int(value), nil
 }
 
 func sendCommand(conn *net.UnixConn, command string) error {

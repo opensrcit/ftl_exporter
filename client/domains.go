@@ -41,7 +41,7 @@ func topQueriesFor(command string, client *FTLClient) (*TopEntries, error) {
 		return nil, err
 	}
 
-	var total ftlUInt32
+	var total ftlInt32
 	if err := binary.Read(conn, binary.BigEndian, &total); err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func topQueriesFor(command string, client *FTLClient) (*TopEntries, error) {
 			return nil, err
 		}
 
-		domainCount, err := readUint32(conn)
+		domainCount, err := readInt32(conn)
 		if err != nil {
 			return nil, err
 		}

@@ -79,11 +79,6 @@ type timestampCount struct {
 	Count     int
 }
 
-type ftlUInt32 struct {
-	_     uint8
-	Value uint32
-}
-
 type ftlUInt64 struct {
 	_     uint8
 	Value uint64

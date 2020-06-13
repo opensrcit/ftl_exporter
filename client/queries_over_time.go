@@ -43,8 +43,8 @@ func (client *FTLClient) GetQueriesOverTime() (*QueriesOverTime, error) {
 	}
 
 	response := make([]struct {
-		Timestamp ftlUInt32
-		Count     ftlUInt32
+		Timestamp ftlInt32
+		Count     ftlInt32
 	}, lines.Lines)
 	if err := binary.Read(conn, binary.BigEndian, &response); err != nil {
 		return nil, err
@@ -62,8 +62,8 @@ func (client *FTLClient) GetQueriesOverTime() (*QueriesOverTime, error) {
 	}
 
 	response = make([]struct {
-		Timestamp ftlUInt32
-		Count     ftlUInt32
+		Timestamp ftlInt32
+		Count     ftlInt32
 	}, lines.Lines)
 	if err := binary.Read(conn, binary.BigEndian, &response); err != nil {
 		return nil, err

@@ -31,15 +31,15 @@ func (client *FTLClient) GetStats() (*Stats, error) {
 	}
 
 	var stats struct {
-		DomainsBeingBlocked ftlUInt32
-		DnsQueriesToday     ftlUInt32
-		AdsBlockedToday     ftlUInt32
+		DomainsBeingBlocked ftlInt32
+		DnsQueriesToday     ftlInt32
+		AdsBlockedToday     ftlInt32
 		AdsPercentageToday  ftlFloat32
-		UniqueDomains       ftlUInt32
-		QueriesForwarded    ftlUInt32
-		QueriesCached       ftlUInt32
-		ClientsEverSeen     ftlUInt32
-		UniqueClients       ftlUInt32
+		UniqueDomains       ftlInt32
+		QueriesForwarded    ftlInt32
+		QueriesCached       ftlInt32
+		ClientsEverSeen     ftlInt32
+		UniqueClients       ftlInt32
 		Status              ftlInt8
 	}
 	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
