@@ -19,7 +19,6 @@ import (
 	"github.com/opensrcit/ftl_exporter/ftl_client"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
-	"sync"
 	"time"
 )
 
@@ -112,15 +111,9 @@ func (collector Exporter) Describe(ch chan<- *prometheus.Desc) {
 
 // Collect implements the prometheus.Collector interface.
 func (collector Exporter) Collect(ch chan<- prometheus.Metric) {
-	wg := sync.WaitGroup{}
-	wg.Add(len(collector.collectors))
 	for name, c := range collector.collectors {
-		go func(name string, c Collector) {
-			execute(name, c, collector.client, ch)
-			wg.Done()
-		}(name, c)
+		execute(name, c, collector.client, ch)
 	}
-	wg.Wait()
 }
 
 func execute(name string, c Collector, client *ftl_client.FTLClient, ch chan<- prometheus.Metric) {
