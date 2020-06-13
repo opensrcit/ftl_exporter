@@ -14,7 +14,7 @@
 package collector
 
 import (
-	"github.com/opensrcit/ftl_exporter/ftl_client"
+	"github.com/opensrcit/ftl_exporter/client"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -43,7 +43,7 @@ func newClientCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *clientCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
+func (c *clientCollector) update(client *client.FTLClient, ch chan<- prometheus.Metric) error {
 	clients, err := client.GetTopClients()
 	if err != nil {
 		return err

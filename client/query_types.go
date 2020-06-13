@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ftl_client
+package client
 
 import (
 	"net"
 )
 
-// GetForwardDestinations retrieves forward destination with amount
-// of queries forwarded to them from response of `>forward-dest` command
-func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error) {
+// GetQueryTypes retrieves map with query type as keys and their percentages
+// among all queries as values from response of `>querytypes` command
+func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
 	}
 	defer closeConnection(conn)
 
-	if err := sendCommand(conn, ">forward-dest"); err != nil {
+	if err := sendCommand(conn, ">querytypes"); err != nil {
 		return nil, err
 	}
 
-	var destinations []UpstreamDestination
+	queryTypes := make(map[string]float32)
 	for {
 		name, err := readString(conn)
 		if err == EOF {
@@ -40,22 +40,13 @@ func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error
 			return nil, err
 		}
 
-		address, err := readString(conn)
-		if err != nil {
-			return nil, err
-		}
-
 		percentage, err := readFloat32(conn)
 		if err != nil {
 			return nil, err
 		}
 
-		destinations = append(destinations, UpstreamDestination{
-			Name:       name,
-			Address:    address,
-			Percentage: percentage,
-		})
+		queryTypes[name] = percentage
 	}
 
-	return &destinations, nil
+	return &queryTypes, nil
 }

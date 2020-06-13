@@ -11,29 +11,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ftl_client
+package client
 
 import (
-	"encoding/binary"
 	"net"
 )
 
-// GetDBStats retrieves database statistics from response of `>dbstats` command
-func (client *FTLClient) GetDBStats() (*DBStats, error) {
+// GetClientNames retrieves ordered list of client's names from
+// response of `>client-names` command
+func (client *FTLClient) GetClientNames() (*[]Client, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
 	}
 	defer closeConnection(conn)
 
-	if err := sendCommand(conn, ">dbstats"); err != nil {
+	if err := sendCommand(conn, ">client-names"); err != nil {
 		return nil, err
 	}
 
-	var stats DBStats
-	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
-		return nil, err
+	var clients []Client
+	for {
+		name, err := readString(conn)
+		if err == EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		address, err := readString(conn)
+		if err != nil {
+			return nil, err
+		}
+
+		clients = append(clients, struct {
+			Name    string
+			Address string
+		}{Name: name, Address: address})
 	}
 
-	return &stats, nil
+	return &clients, nil
 }

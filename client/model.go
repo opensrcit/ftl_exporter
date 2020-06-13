@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ftl_client
+package client
 
 // Stats represents the response of `>stats` command
 type Stats struct {

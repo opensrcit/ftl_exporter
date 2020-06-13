@@ -16,7 +16,7 @@ package collector
 import (
 	"flag"
 	"fmt"
-	"github.com/opensrcit/ftl_exporter/ftl_client"
+	"github.com/opensrcit/ftl_exporter/client"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
 	"time"
@@ -71,7 +71,7 @@ func registerCollector(collector string, isDefaultEnabled bool, factory func() (
 // Exporter represents exporter and has a link to the client
 type Exporter struct {
 	collectors map[string]Collector
-	client     *ftl_client.FTLClient
+	client     *client.FTLClient
 }
 
 // NewExporter creates exporter using the provided socket path
@@ -92,7 +92,7 @@ func NewExporter(socket string) (*Exporter, error) {
 		}
 	}
 
-	client, err := ftl_client.NewClient(socket)
+	client, err := client.NewClient(socket)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (collector Exporter) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func execute(name string, c Collector, client *ftl_client.FTLClient, ch chan<- prometheus.Metric) {
+func execute(name string, c Collector, client *client.FTLClient, ch chan<- prometheus.Metric) {
 	begin := time.Now()
 	err := c.update(client, ch)
 	duration := time.Since(begin)
@@ -132,5 +132,5 @@ func execute(name string, c Collector, client *ftl_client.FTLClient, ch chan<- p
 // Collector is the interface a collector has to implement.
 type Collector interface {
 	// Get new metrics and expose them via prometheus registry.
-	update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error
+	update(client *client.FTLClient, ch chan<- prometheus.Metric) error
 }

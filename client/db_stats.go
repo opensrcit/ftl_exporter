@@ -11,42 +11,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ftl_client
+package client
 
 import (
+	"encoding/binary"
 	"net"
 )
 
-// GetQueryTypes retrieves map with query type as keys and their percentages
-// among all queries as values from response of `>querytypes` command
-func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
+// GetDBStats retrieves database statistics from response of `>dbstats` command
+func (client *FTLClient) GetDBStats() (*DBStats, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
 	}
 	defer closeConnection(conn)
 
-	if err := sendCommand(conn, ">querytypes"); err != nil {
+	if err := sendCommand(conn, ">dbstats"); err != nil {
 		return nil, err
 	}
 
-	queryTypes := make(map[string]float32)
-	for {
-		name, err := readString(conn)
-		if err == EOF {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		percentage, err := readFloat32(conn)
-		if err != nil {
-			return nil, err
-		}
-
-		queryTypes[name] = percentage
+	var stats DBStats
+	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
+		return nil, err
 	}
 
-	return &queryTypes, nil
+	return &stats, nil
 }
