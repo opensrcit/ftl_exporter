@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ftl_client
+package client
 
 import (
 	"net"
 )
 
-// GetClientNames retrieves ordered list of client's names from
-// response of `>client-names` command
-func (client *FTLClient) GetClientNames() (*[]Client, error) {
+// GetForwardDestinations retrieves forward destination with amount
+// of queries forwarded to them from response of `>forward-dest` command
+func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
 	}
 	defer closeConnection(conn)
 
-	if err := sendCommand(conn, ">client-names"); err != nil {
+	if err := sendCommand(conn, ">forward-dest"); err != nil {
 		return nil, err
 	}
 
-	var clients []Client
+	var destinations []UpstreamDestination
 	for {
 		name, err := readString(conn)
 		if err == EOF {
@@ -45,11 +45,17 @@ func (client *FTLClient) GetClientNames() (*[]Client, error) {
 			return nil, err
 		}
 
-		clients = append(clients, struct {
-			Name    string
-			Address string
-		}{Name: name, Address: address})
+		percentage, err := readFloat32(conn)
+		if err != nil {
+			return nil, err
+		}
+
+		destinations = append(destinations, UpstreamDestination{
+			Name:       name,
+			Address:    address,
+			Percentage: percentage,
+		})
 	}
 
-	return &clients, nil
+	return &destinations, nil
 }

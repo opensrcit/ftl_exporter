@@ -14,7 +14,7 @@
 package collector
 
 import (
-	"github.com/opensrcit/ftl_exporter/ftl_client"
+	"github.com/opensrcit/ftl_exporter/client"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -36,7 +36,7 @@ func newQueryTypesCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *queryTypesCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
+func (c *queryTypesCollector) update(client *client.FTLClient, ch chan<- prometheus.Metric) error {
 	queryTypes, err := client.GetQueryTypes()
 	if err != nil {
 		return err

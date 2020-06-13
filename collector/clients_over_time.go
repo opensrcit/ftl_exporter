@@ -15,7 +15,7 @@ package collector
 
 import (
 	"fmt"
-	"github.com/opensrcit/ftl_exporter/ftl_client"
+	"github.com/opensrcit/ftl_exporter/client"
 	"github.com/prometheus/client_golang/prometheus"
 	"sort"
 )
@@ -40,7 +40,7 @@ func newClientsOverTimeCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *clientsOverTimeCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
+func (c *clientsOverTimeCollector) update(client *client.FTLClient, ch chan<- prometheus.Metric) error {
 	clientsOverTime, err := client.GetClientsOverTime()
 	if err != nil {
 		return err

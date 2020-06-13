@@ -14,7 +14,7 @@
 package collector
 
 import (
-	"github.com/opensrcit/ftl_exporter/ftl_client"
+	"github.com/opensrcit/ftl_exporter/client"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -45,7 +45,7 @@ func newDbStatsCollector() (Collector, error) {
 	}, nil
 }
 
-func (c *dbStatsCollector) update(client *ftl_client.FTLClient, ch chan<- prometheus.Metric) error {
+func (c *dbStatsCollector) update(client *client.FTLClient, ch chan<- prometheus.Metric) error {
 	dbStats, err := client.GetDBStats()
 	if err != nil {
 		return err
