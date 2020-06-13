@@ -17,6 +17,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/opensrcit/ftl_exporter/collector"
+	"github.com/opensrcit/ftl_exporter/version"
 	"log"
 	"net/http"
 
@@ -24,11 +25,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-var Version = "development"
-
 var (
 	listenAddress string
-	metricsPath string
+	metricsPath   string
 	socket        string
 )
 
@@ -46,7 +45,7 @@ func init() {
 	flag.StringVar(&socket, "socket", "/var/run/pihole/FTL.sock", "FTL socket path")
 
 	flag.Usage = func() {
-		fmt.Println("FTL Exporter", Version)
+		fmt.Println("FTL Exporter", version.Version)
 		flag.PrintDefaults()
 	}
 
@@ -54,9 +53,14 @@ func init() {
 }
 
 func main() {
-	log.Println("FTL Exporter", Version)
+	log.Println("FTL Exporter", version.Version)
 
-	ftlExporter := collector.NewFTLExporter(socket)
+	ftlExporter, err := collector.NewExporter(socket)
+	if err != nil {
+		log.Fatalln(err)
+
+		return
+	}
 	prometheus.MustRegister(ftlExporter)
 
 	http.Handle(metricsPath, promhttp.Handler())
