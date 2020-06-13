@@ -38,10 +38,12 @@ type DBStats struct {
 // It contains a total amount of entries and a list of entries label and count
 type TopEntries struct {
 	Total   int
-	Entries []struct {
-		Label string
-		Count int
-	}
+	Entries []entry
+}
+
+type entry struct {
+	Label string
+	Count int
 }
 
 // UpstreamDestination represents the response `>forward-dest` command.
@@ -77,11 +79,6 @@ type QueriesOverTime struct {
 type timestampCount struct {
 	Timestamp int
 	Count     int
-}
-
-type ftlUInt64 struct {
-	_     uint8
-	Value uint64
 }
 
 type ftlInt32 struct {

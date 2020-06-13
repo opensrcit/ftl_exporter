@@ -92,14 +92,14 @@ func NewExporter(socket string) (*Exporter, error) {
 		}
 	}
 
-	client, err := client.NewClient(socket)
+	ftlClient, err := client.NewClient(socket)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Exporter{
 		collectors: collectors,
-		client:     client,
+		client:     ftlClient,
 	}, nil
 }
 
@@ -123,6 +123,7 @@ func execute(name string, c Collector, client *client.FTLClient, ch chan<- prome
 
 	success := float64(1)
 	if err != nil {
+		log.Println(name, err)
 		success = 0
 	}
 	ch <- prometheus.MustNewConstMetric(scrapeDurationDesc, prometheus.GaugeValue, duration.Seconds(), name)

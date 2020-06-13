@@ -14,8 +14,6 @@
 package client
 
 import (
-	"encoding/binary"
-	"io"
 	"net"
 )
 
@@ -36,37 +34,31 @@ func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 
 	var timestamps []TimestampClients
 	for {
-		var format uint8
-		err := binary.Read(conn, binary.BigEndian, &format)
-
-		if err == io.EOF || format == formatEOF {
+		timestamp, err := readInt32(conn)
+		if err == errEndOfInput {
 			break
 		}
-
-		var clients []int
-
-		var timestamp uint32
-		err = binary.Read(conn, binary.BigEndian, &timestamp)
 		if err != nil {
 			return nil, err
 		}
 
+		var clients []int
+
 		for {
-			var clientQueryCount ftlInt32
-			err := binary.Read(conn, binary.BigEndian, &clientQueryCount)
+			clientQueryCount, err := readInt32(conn)
 			if err != nil {
 				return nil, err
 			}
 
-			if clientQueryCount.Value == -1 {
+			if clientQueryCount == -1 {
 				break
 			}
 
-			clients = append(clients, int(clientQueryCount.Value))
+			clients = append(clients, clientQueryCount)
 		}
 
 		timestamps = append(timestamps, TimestampClients{
-			Timestamp: int(timestamp),
+			Timestamp: timestamp,
 			Count:     clients,
 		})
 	}

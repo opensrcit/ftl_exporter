@@ -51,10 +51,10 @@ func (client *FTLClient) GetQueriesOverTime() (*QueriesOverTime, error) {
 	}
 
 	for _, r := range response {
-		result.Forwarded = append(result.Forwarded, struct {
-			Timestamp int
-			Count     int
-		}{Timestamp: int(r.Timestamp.Value), Count: int(r.Count.Value)})
+		result.Forwarded = append(result.Forwarded, timestampCount{
+			Timestamp: int(r.Timestamp.Value),
+			Count:     int(r.Count.Value),
+		})
 	}
 
 	if err := binary.Read(conn, binary.BigEndian, &lines); err != nil {
@@ -70,10 +70,10 @@ func (client *FTLClient) GetQueriesOverTime() (*QueriesOverTime, error) {
 	}
 
 	for _, r := range response {
-		result.Blocked = append(result.Blocked, struct {
-			Timestamp int
-			Count     int
-		}{Timestamp: int(r.Timestamp.Value), Count: int(r.Count.Value)})
+		result.Blocked = append(result.Blocked, timestampCount{
+			Timestamp: int(r.Timestamp.Value),
+			Count:     int(r.Count.Value),
+		})
 	}
 
 	return &result, nil

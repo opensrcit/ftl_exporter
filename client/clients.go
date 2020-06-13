@@ -14,7 +14,6 @@
 package client
 
 import (
-	"encoding/binary"
 	"net"
 )
 
@@ -41,13 +40,13 @@ func topClientsFor(command string, client *FTLClient) (*TopEntries, error) {
 		return nil, err
 	}
 
-	var total ftlInt32
-	if err := binary.Read(conn, binary.BigEndian, &total); err != nil {
+	total, err := readInt32(conn)
+	if err != nil {
 		return nil, err
 	}
 
 	result := TopEntries{
-		Total: int(total.Value),
+		Total: total,
 	}
 
 	for {
@@ -69,10 +68,7 @@ func topClientsFor(command string, client *FTLClient) (*TopEntries, error) {
 			return nil, err
 		}
 
-		result.Entries = append(result.Entries, struct {
-			Label string
-			Count int
-		}{Label: address, Count: int(count)})
+		result.Entries = append(result.Entries, entry{Label: address, Count: count})
 	}
 
 	return &result, nil
