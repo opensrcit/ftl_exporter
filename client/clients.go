@@ -49,7 +49,7 @@ func topClientsFor(command string, client *FTLClient) (*Entries, error) {
 
 	for {
 		_, err := readString(conn)
-		if err == EOF {
+		if err == errEndOfInput {
 			break
 		}
 		if err != nil {

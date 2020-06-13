@@ -48,7 +48,7 @@ func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 
 	for {
 		domainName, err := readString(conn)
-		if err == EOF {
+		if err == errEndOfInput {
 			break
 		}
 		if err != nil {

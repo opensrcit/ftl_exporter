@@ -19,7 +19,7 @@ import (
 	"net"
 )
 
-// GetQueriesOverTime retrieves amount of queries grouped by client
+// GetClientsOverTime retrieves amount of queries grouped by client
 // for the last 24 hours aggregated over 10 minute intervals
 // from response of `>ClientsoverTime` command
 // Warning: API might be not public

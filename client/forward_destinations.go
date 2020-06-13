@@ -33,7 +33,7 @@ func (client *FTLClient) GetForwardDestinations() (*[]UpstreamDestination, error
 	var destinations []UpstreamDestination
 	for {
 		name, err := readString(conn)
-		if err == EOF {
+		if err == errEndOfInput {
 			break
 		}
 		if err != nil {

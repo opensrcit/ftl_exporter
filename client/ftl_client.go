@@ -31,8 +31,8 @@ const (
 	formatEOF uint8 = 0xc1 // 193
 )
 
-var EOF = errors.New("EOF")
-var invalidFormat = errors.New("unexpected format")
+var errEndOfInput = errors.New("end of the input")
+var errInvalidFormat = errors.New("unexpected format")
 
 // FTLClient for Pi-holes's FTL daemon. Contains address to a unix socket
 type FTLClient struct {
@@ -66,18 +66,18 @@ func readString(conn *net.UnixConn) (string, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return "", EOF
+			return "", errEndOfInput
 		}
 
 		return "", err
 	}
 
 	if format == formatEOF {
-		return "", EOF
+		return "", errEndOfInput
 	}
 
 	if format != formatString {
-		return "", invalidFormat
+		return "", errInvalidFormat
 	}
 
 	var length uint32
@@ -98,18 +98,18 @@ func readFloat32(conn *net.UnixConn) (float32, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return 0.0, EOF
+			return 0.0, errEndOfInput
 		}
 
 		return 0.0, err
 	}
 
 	if format == formatEOF {
-		return 0.0, EOF
+		return 0.0, errEndOfInput
 	}
 
 	if format != formatFloat32 {
-		return 0.0, invalidFormat
+		return 0.0, errInvalidFormat
 	}
 
 	var value float32
@@ -124,18 +124,18 @@ func readUint32(conn *net.UnixConn) (uint32, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return 0, EOF
+			return 0, errEndOfInput
 		}
 
 		return 0, err
 	}
 
 	if format == formatEOF {
-		return 0, EOF
+		return 0, errEndOfInput
 	}
 
 	if format != formatUint32 {
-		return 0, invalidFormat
+		return 0, errInvalidFormat
 	}
 
 	var value uint32
