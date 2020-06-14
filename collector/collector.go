@@ -46,6 +46,7 @@ var (
 	)
 )
 
+// registerCollector registers and enables collectors based on flags provided
 func registerCollector(collector string, isDefaultEnabled bool, factory func() (Collector, error)) {
 	var helpDefaultState string
 	if isDefaultEnabled {
@@ -116,6 +117,7 @@ func (collector Exporter) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
+// execute runs the collector's update function, sets duration and success metrics for collector
 func execute(name string, c Collector, client *client.FTLClient, ch chan<- prometheus.Metric) {
 	begin := time.Now()
 	err := c.update(client, ch)
@@ -123,7 +125,6 @@ func execute(name string, c Collector, client *client.FTLClient, ch chan<- prome
 
 	success := float64(1)
 	if err != nil {
-		log.Println(name, err)
 		success = 0
 	}
 	ch <- prometheus.MustNewConstMetric(scrapeDurationDesc, prometheus.GaugeValue, duration.Seconds(), name)
