@@ -22,7 +22,8 @@ import (
 )
 
 const (
-	formatUint32  uint8 = 0xd2 // 210
+	formatInt32   uint8 = 0xd2 // 210
+	formatInt64   uint8 = 0xd3 // 211
 	formatFloat32 uint8 = 0xca // 202
 	formatUInt8   uint8 = 0xcc // 204
 	formatString  uint8 = 0xdb // 219
@@ -31,8 +32,8 @@ const (
 	formatEOF uint8 = 0xc1 // 193
 )
 
-var EOF = errors.New("EOF")
-var invalidFormat = errors.New("unexpected format")
+var errEndOfInput = errors.New("end of the input")
+var errInvalidFormat = errors.New("unexpected format")
 
 // FTLClient for Pi-holes's FTL daemon. Contains address to a unix socket
 type FTLClient struct {
@@ -66,18 +67,18 @@ func readString(conn *net.UnixConn) (string, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return "", EOF
+			return "", errEndOfInput
 		}
 
 		return "", err
 	}
 
 	if format == formatEOF {
-		return "", EOF
+		return "", errEndOfInput
 	}
 
 	if format != formatString {
-		return "", invalidFormat
+		return "", errInvalidFormat
 	}
 
 	var length uint32
@@ -98,18 +99,18 @@ func readFloat32(conn *net.UnixConn) (float32, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return 0.0, EOF
+			return 0.0, errEndOfInput
 		}
 
 		return 0.0, err
 	}
 
 	if format == formatEOF {
-		return 0.0, EOF
+		return 0.0, errEndOfInput
 	}
 
 	if format != formatFloat32 {
-		return 0.0, invalidFormat
+		return 0.0, errInvalidFormat
 	}
 
 	var value float32
@@ -120,30 +121,82 @@ func readFloat32(conn *net.UnixConn) (float32, error) {
 	return value, nil
 }
 
-func readUint32(conn *net.UnixConn) (uint32, error) {
+func readInt32(conn *net.UnixConn) (int, error) {
 	var format uint8
 	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
 		if err == io.EOF {
-			return 0, EOF
+			return 0, errEndOfInput
 		}
 
 		return 0, err
 	}
 
 	if format == formatEOF {
-		return 0, EOF
+		return 0, errEndOfInput
 	}
 
-	if format != formatUint32 {
-		return 0, invalidFormat
+	if format != formatInt32 {
+		return 0, errInvalidFormat
 	}
 
-	var value uint32
+	var value int32
 	if err := binary.Read(conn, binary.BigEndian, &value); err != nil {
 		return 0, err
 	}
 
-	return value, nil
+	return int(value), nil
+}
+
+func readInt64(conn *net.UnixConn) (int, error) {
+	var format uint8
+	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
+		if err == io.EOF {
+			return 0, errEndOfInput
+		}
+
+		return 0, err
+	}
+
+	if format == formatEOF {
+		return 0, errEndOfInput
+	}
+
+	if format != formatInt64 {
+		return 0, errInvalidFormat
+	}
+
+	var value int64
+	if err := binary.Read(conn, binary.BigEndian, &value); err != nil {
+		return 0, err
+	}
+
+	return int(value), nil
+}
+
+func readMapCount(conn *net.UnixConn) (int, error) {
+	var format uint8
+	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
+		if err == io.EOF {
+			return 0, errEndOfInput
+		}
+
+		return 0, err
+	}
+
+	if format == formatEOF {
+		return 0, errEndOfInput
+	}
+
+	if format != formatMap16 {
+		return 0, errInvalidFormat
+	}
+
+	var value int16
+	if err := binary.Read(conn, binary.BigEndian, &value); err != nil {
+		return 0, err
+	}
+
+	return int(value), nil
 }
 
 func sendCommand(conn *net.UnixConn, command string) error {

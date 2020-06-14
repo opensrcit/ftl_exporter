@@ -14,7 +14,6 @@
 package client
 
 import (
-	"encoding/binary"
 	"net"
 )
 
@@ -30,10 +29,18 @@ func (client *FTLClient) GetDBStats() (*DBStats, error) {
 		return nil, err
 	}
 
-	var stats DBStats
-	if err := binary.Read(conn, binary.BigEndian, &stats); err != nil {
+	rows, err := readInt32(conn)
+	if err != nil {
 		return nil, err
 	}
 
-	return &stats, nil
+	size, err := readInt64(conn)
+	if err != nil {
+		return nil, err
+	}
+
+	return &DBStats{
+		RowsCount: rows,
+		FileSize:  size,
+	}, nil
 }

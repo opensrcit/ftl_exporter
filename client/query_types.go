@@ -33,7 +33,7 @@ func (client *FTLClient) GetQueryTypes() (*map[string]float32, error) {
 	queryTypes := make(map[string]float32)
 	for {
 		name, err := readString(conn)
-		if err == EOF {
+		if err == errEndOfInput {
 			break
 		}
 		if err != nil {

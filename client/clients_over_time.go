@@ -14,12 +14,10 @@
 package client
 
 import (
-	"encoding/binary"
-	"io"
 	"net"
 )
 
-// GetQueriesOverTime retrieves amount of queries grouped by client
+// GetClientsOverTime retrieves amount of queries grouped by client
 // for the last 24 hours aggregated over 10 minute intervals
 // from response of `>ClientsoverTime` command
 // Warning: API might be not public
@@ -36,29 +34,23 @@ func (client *FTLClient) GetClientsOverTime() (*[]TimestampClients, error) {
 
 	var timestamps []TimestampClients
 	for {
-		var format uint8
-		err := binary.Read(conn, binary.BigEndian, &format)
-
-		if err == io.EOF || format == formatEOF {
+		timestamp, err := readInt32(conn)
+		if err == errEndOfInput {
 			break
 		}
-
-		var clients []Int32Block
-
-		var timestamp uint32
-		err = binary.Read(conn, binary.BigEndian, &timestamp)
 		if err != nil {
 			return nil, err
 		}
 
+		var clients []int
+
 		for {
-			var clientQueryCount Int32Block
-			err := binary.Read(conn, binary.BigEndian, &clientQueryCount)
+			clientQueryCount, err := readInt32(conn)
 			if err != nil {
 				return nil, err
 			}
 
-			if clientQueryCount.Value == -1 {
+			if clientQueryCount == -1 {
 				break
 			}
 

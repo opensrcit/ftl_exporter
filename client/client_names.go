@@ -33,7 +33,7 @@ func (client *FTLClient) GetClientNames() (*[]Client, error) {
 	var clients []Client
 	for {
 		name, err := readString(conn)
-		if err == EOF {
+		if err == errEndOfInput {
 			break
 		}
 		if err != nil {

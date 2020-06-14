@@ -14,23 +14,22 @@
 package client
 
 import (
-	"encoding/binary"
 	"net"
 )
 
 // GetTopDomains retrieves the list of domains together with amount of queries
 // made for each domain from response of `>top-domains` command
-func (client *FTLClient) GetTopDomains() (*Entries, error) {
+func (client *FTLClient) GetTopDomains() (*TopEntries, error) {
 	return topQueriesFor(">top-domains", client)
 }
 
 // GetTopAds retrieves the list of ad domains together with amount of queries
 // made for each domain from response of `>top-ads` command
-func (client *FTLClient) GetTopAds() (*Entries, error) {
+func (client *FTLClient) GetTopAds() (*TopEntries, error) {
 	return topQueriesFor(">top-ads", client)
 }
 
-func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
+func topQueriesFor(command string, client *FTLClient) (*TopEntries, error) {
 	conn, err := net.DialUnix("unix", nil, client.addr)
 	if err != nil {
 		return nil, err
@@ -41,29 +40,30 @@ func topQueriesFor(command string, client *FTLClient) (*Entries, error) {
 		return nil, err
 	}
 
-	var result Entries
-	if err := binary.Read(conn, binary.BigEndian, &result.Total); err != nil {
+	total, err := readInt32(conn)
+	if err != nil {
 		return nil, err
+	}
+
+	result := TopEntries{
+		Total: int(total),
 	}
 
 	for {
 		domainName, err := readString(conn)
-		if err == EOF {
+		if err == errEndOfInput {
 			break
 		}
 		if err != nil {
 			return nil, err
 		}
 
-		domainCount, err := readUint32(conn)
+		domainCount, err := readInt32(conn)
 		if err != nil {
 			return nil, err
 		}
 
-		result.List = append(result.List, struct {
-			Entry string
-			Count uint32
-		}{Entry: domainName, Count: domainCount})
+		result.Entries = append(result.Entries, entry{Label: domainName, Count: domainCount})
 	}
 
 	return &result, nil

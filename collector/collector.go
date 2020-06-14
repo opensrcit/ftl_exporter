@@ -46,6 +46,7 @@ var (
 	)
 )
 
+// registerCollector registers and enables collectors based on flags provided
 func registerCollector(collector string, isDefaultEnabled bool, factory func() (Collector, error)) {
 	var helpDefaultState string
 	if isDefaultEnabled {
@@ -92,14 +93,14 @@ func NewExporter(socket string) (*Exporter, error) {
 		}
 	}
 
-	client, err := client.NewClient(socket)
+	ftlClient, err := client.NewClient(socket)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Exporter{
 		collectors: collectors,
-		client:     client,
+		client:     ftlClient,
 	}, nil
 }
 
@@ -116,6 +117,7 @@ func (collector Exporter) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
+// execute runs the collector's update function, sets duration and success metrics for collector
 func execute(name string, c Collector, client *client.FTLClient, ch chan<- prometheus.Metric) {
 	begin := time.Now()
 	err := c.update(client, ch)

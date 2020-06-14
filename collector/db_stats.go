@@ -51,8 +51,8 @@ func (c *dbStatsCollector) update(client *client.FTLClient, ch chan<- prometheus
 		return err
 	}
 
-	ch <- prometheus.MustNewConstMetric(c.queriesInDatabase, prometheus.CounterValue, float64(dbStats.Rows.Value))
-	ch <- prometheus.MustNewConstMetric(c.databaseFileSize, prometheus.CounterValue, float64(dbStats.Size.Value))
+	ch <- prometheus.MustNewConstMetric(c.queriesInDatabase, prometheus.CounterValue, float64(dbStats.RowsCount))
+	ch <- prometheus.MustNewConstMetric(c.databaseFileSize, prometheus.CounterValue, float64(dbStats.FileSize))
 
 	return nil
 }
