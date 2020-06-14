@@ -173,6 +173,32 @@ func readInt64(conn *net.UnixConn) (int, error) {
 	return int(value), nil
 }
 
+func readMapCount(conn *net.UnixConn) (int, error) {
+	var format uint8
+	if err := binary.Read(conn, binary.BigEndian, &format); err != nil {
+		if err == io.EOF {
+			return 0, errEndOfInput
+		}
+
+		return 0, err
+	}
+
+	if format == formatEOF {
+		return 0, errEndOfInput
+	}
+
+	if format != formatMap16 {
+		return 0, errInvalidFormat
+	}
+
+	var value int16
+	if err := binary.Read(conn, binary.BigEndian, &value); err != nil {
+		return 0, err
+	}
+
+	return int(value), nil
+}
+
 func sendCommand(conn *net.UnixConn, command string) error {
 	if _, err := conn.Write([]byte(command)); err != nil {
 		return err
